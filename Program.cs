@@ -2,7 +2,8 @@ using HospitalSystem.Interfaces;
 using HospitalSystem.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddControllers();
+
+builder.Services.AddControllersWithViews(); 
 
 // builder.Services.AddScoped<IPatientService, PatientService>();
 // builder.Services.AddScoped<IDoctorService, DoctorService>();
@@ -12,7 +13,9 @@ builder.Services.AddSingleton<IDoctorService, DoctorService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-app.MapControllers();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Doctor}/{action=Index}/{id?}");
 
 app.Run();

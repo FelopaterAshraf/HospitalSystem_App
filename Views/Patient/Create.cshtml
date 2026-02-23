@@ -1,0 +1,51 @@
+@model HospitalSystem.Models.Patient
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Patient</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; padding: 30px; }
+        .container { max-width: 500px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #0077b6, #00a8e8); color: white; padding: 25px 30px; text-align: center; }
+        .header h1 { margin: 0; font-size: 1.6rem; font-weight: 500; }
+        .form-body { padding: 30px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 600; color: #334155; margin-bottom: 8px; }
+        input[type="text"] { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
+        .submit-btn { width: 100%; background: #0077b6; color: white; padding: 12px; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,119,182,0.3); }
+        .submit-btn:hover { background: #023e8a; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,119,182,0.4); }
+        .back-link { display: block; text-align: center; margin-top: 15px; color: #64748b; text-decoration: none; font-weight: 500; transition: color 0.2s; }
+        .back-link:hover { color: #334155; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>➕ Add New Patient</h1>
+        </div>
+        
+        <div class="form-body">
+            <form action="/patients/create" method="post">
+                <div class="form-group">
+                    <label for="Name">Patient's Name:</label>
+                    <input type="text" id="Name" name="Name" required placeholder="e.g. John Doe" />
+                </div>
+                
+                <div class="form-group">
+                    <label for="Diagnosis">Diagnosis:</label>
+                    <input type="text" id="Diagnosis" name="Diagnosis" required placeholder="e.g. Flu, Headache" />
+                </div>
+                
+                <button type="submit" class="submit-btn">Save Patient</button>
+            </form>
+            
+            <a href="/patients" class="back-link">Cancel and return to list</a>
+        </div>
+    </div>
+
+</body>
+</html>

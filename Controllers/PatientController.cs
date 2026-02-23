@@ -4,9 +4,7 @@ using HospitalSystem.Models;
 
 namespace HospitalSystem.Controllers;
 
-[Route("api/patients")]  //Defines base URL
-[ApiController] 
-public class PatientController : ControllerBase
+public class PatientController : Controller 
 {
     private readonly IPatientService _patientService;
 
@@ -15,64 +13,79 @@ public class PatientController : ControllerBase
         _patientService = patientService;
     }
 
-
-
-    [HttpGet]
-    public IActionResult GetAll()
+    //MVC VIEW: The Main HTML Page
+    [HttpGet("patients")]
+    public IActionResult Index()
     {
         var patients = _patientService.GetAllPatients();
-        return Ok(patients);
+        return View(patients);
+    }
+
+    // Show the empty HTML Form in the browser
+    [HttpGet("patients/create")]
+    public IActionResult CreateWeb()
+    {
+        return View("Create"); 
+    }
+
+    //  Catch the data when the user clicks "Submit"
+    [HttpPost("patients/create")]
+    public IActionResult CreateWeb([FromForm] Patient patient)
+    {
+        _patientService.AddPatient(patient);
+        return RedirectToAction("Index"); 
     }
 
 
-    
-    [HttpGet("{id}")]
+
+
+
+
+    // API ENDPOINT
+    [HttpGet("api/patients")]
+    public IActionResult GetAllApi()
+    {
+        var patients = _patientService.GetAllPatients();
+        return Ok(patients); 
+    }
+
+    // API ENDPOINT
+    [HttpGet("api/patients/{id}")]
     public IActionResult GetById(int id)
     {
         var patient = _patientService.GetPatientById(id);
-        if (patient == null)
-        {
-            return NotFound();
-        }
+        if (patient == null) return NotFound();
         return Ok(patient);
     }
 
-    
-
-    [HttpPost]
-    public IActionResult Create(Patient patient)
+    // API ENDPOINT
+    [HttpPost("api/patients")]
+    public IActionResult Create([FromBody] Patient patient)
     {
         var newPatient = _patientService.AddPatient(patient);
-        return CreatedAtAction(nameof(GetById), new { id = newPatient.Id }, newPatient);
+        return Ok(newPatient);
     }
 
-    [HttpPut("{id}")]
-    public IActionResult Update(int id, Patient patient)
+    // API ENDPOINT
+    [HttpPut("api/patients/{id}")]
+    public IActionResult Update(int id, [FromBody] Patient patient)
     {
-        // Make sure the ID in the URL matches the ID in the data
-        if (id != patient.Id)
-        {
-            return BadRequest();
-        }
-
+        if (id != patient.Id) return BadRequest();
+        
         var updatedPatient = _patientService.UpdatePatient(patient);
-        if (updatedPatient == null)
-        {
-            return NotFound();
-        }
+        if (updatedPatient == null) return NotFound();
+        
         return Ok(updatedPatient);
     }
 
-    [HttpDelete("{id}")]
+    //API ENDPOINT
+    [HttpDelete("api/patients/{id}")]
     public IActionResult Delete(int id)
     {
         var existingPatient = _patientService.GetPatientById(id);
-        if (existingPatient == null)
-        {
-            return NotFound();
-        }
+        if (existingPatient == null) return NotFound();
 
         _patientService.DeletePatient(id);
-        return NoContent(); // 204 No Content is the standard success response for a Delete
+        return NoContent();
     }
 }
