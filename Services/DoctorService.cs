@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using HospitalSystem.Database;
+using HospitalSystem.DTOs;
 using HospitalSystem.Interfaces;
 using HospitalSystem.Models;
 
@@ -5,46 +8,67 @@ namespace HospitalSystem.Services;
 
 public class DoctorService : IDoctorService
 {
-    private List<Doctor> doctors = new List<Doctor>
-    {
-        new Doctor { Id = 1, Name = "Dr.Amir", Specialty = "Dentist" },
-        new Doctor { Id = 2, Name = "Dr.Kerolos", Specialty = "Surgeon" }
-    };
+    private readonly ApplicationDbContext _context;
 
-    public IEnumerable<Doctor> GetAllDoctors()
+    public DoctorService(ApplicationDbContext context)
     {
-        return doctors;
+        _context = context;
     }
 
-    public Doctor? GetDoctorById(int id)
+    public async Task<IEnumerable<DoctorResponseDto>> GetAllDoctorsAsync()
     {
-        return doctors.FirstOrDefault(d => d.Id == id);
+        return await _context.Doctors.AsNoTracking().Select(d => new DoctorResponseDto
+            {
+                Id = d.Id,
+                Name = d.Name,
+                Specialty = d.Specialty
+            })
+            .ToListAsync();
     }
 
-    public Doctor AddDoctor(Doctor doctor)
+    public async Task<DoctorResponseDto?> GetDoctorByIdAsync(int id)
     {
-        doctor.Id = doctors.Any() ? doctors.Max(d => d.Id) + 1 : 1;
-        doctors.Add(doctor);
-        return doctor;
+        return await _context.Doctors.AsNoTracking().Where(d => d.Id == id).Select(d => new DoctorResponseDto
+            {
+                Id = d.Id,
+                Name = d.Name,
+                Specialty = d.Specialty
+            })
+            .FirstOrDefaultAsync();
     }
 
-    public Doctor UpdateDoctor(Doctor doctor)
+    public async Task AddDoctorAsync(DoctorCreateDto doctorDto)
     {
-        var existingDoctor = GetDoctorById(doctor.Id);
-        if (existingDoctor != null)
+        var doctor = new Doctor
         {
-            existingDoctor.Name = doctor.Name;
-            existingDoctor.Specialty = doctor.Specialty;
+            Name = doctorDto.Name,
+            Specialty = doctorDto.Specialty
+        };
+
+        _context.Doctors.Add(doctor);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task UpdateDoctorAsync(DoctorUpdateDto doctorDto)
+    {
+        var doctor = await _context.Doctors.FindAsync(doctorDto.Id);
+        
+        if (doctor != null)
+        {
+            doctor.Name = doctorDto.Name;
+            doctor.Specialty = doctorDto.Specialty;
+            
+            await _context.SaveChangesAsync();
         }
-        return existingDoctor;
     }
 
-    public void DeleteDoctor(int id)
+    public async Task DeleteDoctorAsync(int id)
     {
-        var doctorToRemove = GetDoctorById(id);
-        if (doctorToRemove != null)
+        var doctor = await _context.Doctors.FindAsync(id);
+        if (doctor != null)
         {
-            doctors.Remove(doctorToRemove);
+            _context.Doctors.Remove(doctor);
+            await _context.SaveChangesAsync();
         }
     }
 }

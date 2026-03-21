@@ -1,11 +1,11 @@
-using HospitalSystem.Models;
-namespace HospitalSystem.Interfaces;
+using HospitalSystem.DTOs;
 
+namespace HospitalSystem.Interfaces;
 public interface IPatientService
 {
-    IEnumerable<Patient> GetAllPatients();
-    Patient? GetPatientById(int id);
-    Patient AddPatient(Patient newPatient);
-    Patient UpdatePatient(Patient updatedPatient);
-    void DeletePatient(int id);
+    Task<IEnumerable<PatientResponseDto>> GetAllPatientsAsync();
+    Task<PatientResponseDto?> GetPatientByIdAsync(int id);
+    Task AddPatientAsync(PatientCreateDto patientDto);
+    Task UpdatePatientAsync(PatientUpdateDto patientDto);
+    Task DeletePatientAsync(int id);
 }

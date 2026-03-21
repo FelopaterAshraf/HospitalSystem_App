@@ -1,11 +1,16 @@
-using HospitalSystem.Models;
+
+using HospitalSystem.DTOs;
+
 namespace HospitalSystem.Interfaces;
 
 public interface IDoctorService
 {
-    IEnumerable<Doctor> GetAllDoctors();
-    Doctor? GetDoctorById(int id);
-    Doctor AddDoctor(Doctor doctor);
-    Doctor UpdateDoctor(Doctor doctor);
-    void DeleteDoctor(int id);
+
+    // Task : Indicates the method is asynchronous ,Meaning it runs without blocking the program, usually because it calls the database
+    Task<IEnumerable<DoctorResponseDto>> GetAllDoctorsAsync();
+    Task<DoctorResponseDto?> GetDoctorByIdAsync(int id);
+    Task AddDoctorAsync(DoctorCreateDto doctorDto);
+    Task UpdateDoctorAsync(DoctorUpdateDto doctorDto);
+    Task DeleteDoctorAsync(int id);
+    
 }

@@ -1,10 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
+using HospitalSystem.DTOs;
 using HospitalSystem.Interfaces;
-using HospitalSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HospitalSystem.Controllers;
 
-public class PatientController : Controller 
+[Route("api/patients")]
+[ApiController] 
+[Authorize]
+public class PatientController : ControllerBase
 {
     private readonly IPatientService _patientService;
 
@@ -13,79 +17,55 @@ public class PatientController : Controller
         _patientService = patientService;
     }
 
-    //MVC VIEW: The Main HTML Page
-    [HttpGet("patients")]
-    public IActionResult Index()
+    // GET: api/patients
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<PatientResponseDto>>> GetPatients()
     {
-        var patients = _patientService.GetAllPatients();
-        return View(patients);
+        var patients = await _patientService.GetAllPatientsAsync();
+        return Ok(patients);
     }
 
-    // Show the empty HTML Form in the browser
-    [HttpGet("patients/create")]
-    public IActionResult CreateWeb()
+    // GET: api/patients/5
+    [HttpGet("{id}")]
+    public async Task<ActionResult<PatientResponseDto>> GetPatient(int id)
     {
-        return View("Create"); 
-    }
-
-    //  Catch the data when the user clicks "Submit"
-    [HttpPost("patients/create")]
-    public IActionResult CreateWeb([FromForm] Patient patient)
-    {
-        _patientService.AddPatient(patient);
-        return RedirectToAction("Index"); 
-    }
-
-
-
-
-
-
-    // API ENDPOINT
-    [HttpGet("api/patients")]
-    public IActionResult GetAllApi()
-    {
-        var patients = _patientService.GetAllPatients();
-        return Ok(patients); 
-    }
-
-    // API ENDPOINT
-    [HttpGet("api/patients/{id}")]
-    public IActionResult GetById(int id)
-    {
-        var patient = _patientService.GetPatientById(id);
-        if (patient == null) return NotFound();
+        var patient = await _patientService.GetPatientByIdAsync(id);
+        
+        if (patient == null)
+        {
+            return NotFound();
+        }
+        
         return Ok(patient);
     }
 
-    // API ENDPOINT
-    [HttpPost("api/patients")]
-    public IActionResult Create([FromBody] Patient patient)
+    // POST: api/patients
+    [HttpPost]
+    public async Task<IActionResult> CreatePatient([FromBody] PatientCreateDto patientDto)
     {
-        var newPatient = _patientService.AddPatient(patient);
-        return Ok(newPatient);
+        await _patientService.AddPatientAsync(patientDto);
+        return Ok(new { message = "Patient created successfully!" });
     }
 
-    // API ENDPOINT
-    [HttpPut("api/patients/{id}")]
-    public IActionResult Update(int id, [FromBody] Patient patient)
+    // PUT: api/patients/5
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdatePatient(int id, [FromBody] PatientUpdateDto patientDto)
     {
-        if (id != patient.Id) return BadRequest();
-        
-        var updatedPatient = _patientService.UpdatePatient(patient);
-        if (updatedPatient == null) return NotFound();
-        
-        return Ok(updatedPatient);
+        if (id != patientDto.Id)
+        {
+            return BadRequest("The ID in the URL does not match the ID in the body.");
+        }
+
+        await _patientService.UpdatePatientAsync(patientDto);
+        return Ok(new { message = "Patient updated successfully!" });
     }
 
-    //API ENDPOINT
-    [HttpDelete("api/patients/{id}")]
-    public IActionResult Delete(int id)
+    // DELETE: api/patients/5
+    [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> DeletePatient(int id)
     {
-        var existingPatient = _patientService.GetPatientById(id);
-        if (existingPatient == null) return NotFound();
-
-        _patientService.DeletePatient(id);
-        return NoContent();
+        await _patientService.DeletePatientAsync(id);
+        return Ok(new { message = "Patient deleted successfully!" });
     }
 }

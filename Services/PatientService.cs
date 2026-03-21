@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using HospitalSystem.Database;
+using HospitalSystem.DTOs;
 using HospitalSystem.Interfaces;
 using HospitalSystem.Models;
 
@@ -5,50 +8,76 @@ namespace HospitalSystem.Services;
 
 public class PatientService : IPatientService
 {
-private List<Patient> patients = new List<Patient>
-    {
-        new Patient { Id = 1, Name = "Felo", Diagnosis = "Flu" },
-        new Patient { Id = 2, Name = "Mohamed", Diagnosis = "Covid" },
-        new Patient { Id = 3, Name = "Kareem", Diagnosis = "Headache"}
-    };
+    private readonly ApplicationDbContext _context;
 
-    public IEnumerable<Patient> GetAllPatients()
+    public PatientService(ApplicationDbContext context)
     {
-        return patients;
-    }
-
-    public Patient GetPatientById(int id)
-    {
-        return patients.FirstOrDefault(p => p.Id == id);
+        _context = context;
     }
 
 
-    public Patient AddPatient(Patient newPatient)
+    public async Task<IEnumerable<PatientResponseDto>> GetAllPatientsAsync()
     {
-        // Automatically generate a new ID
-        newPatient.Id = patients.Any() ? patients.Max(p => p.Id) + 1 : 1;
-        patients.Add(newPatient);
-        return newPatient;
+        return await _context.Patients
+            .AsNoTracking() 
+            .Select(p => new PatientResponseDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Diagnosis = p.Diagnosis
+            })
+            .ToListAsync();
     }
 
-    public Patient UpdatePatient(Patient updatedPatient)
+   
+    public async Task<PatientResponseDto?> GetPatientByIdAsync(int id)
     {
-        var existingPatient = GetPatientById(updatedPatient.Id);
-        if (existingPatient != null)
+        return await _context.Patients
+            .AsNoTracking()
+            .Where(p => p.Id == id)
+            .Select(p => new PatientResponseDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Diagnosis = p.Diagnosis
+            })
+            .FirstOrDefaultAsync();
+    }
+
+    // Takes the secure DTO, maps it to a real Patient, and saves it
+    public async Task AddPatientAsync(PatientCreateDto patientDto)
+    {
+        var patient = new Patient
         {
-            // Update the properties
-            existingPatient.Name = updatedPatient.Name;
-            existingPatient.Diagnosis = updatedPatient.Diagnosis;
+            Name = patientDto.Name,
+            Diagnosis = patientDto.Diagnosis
+        };
+
+        _context.Patients.Add(patient);
+        await _context.SaveChangesAsync();
+    }
+
+    // Finds the real Patient, updates it safely with DTO data
+    public async Task UpdatePatientAsync(PatientUpdateDto patientDto)
+    {
+        var patient = await _context.Patients.FindAsync(patientDto.Id);
+        
+        if (patient != null)
+        {
+            patient.Name = patientDto.Name;
+            patient.Diagnosis = patientDto.Diagnosis;
+            
+            await _context.SaveChangesAsync();
         }
-        return existingPatient;
     }
 
-    public void DeletePatient(int id)
+    public async Task DeletePatientAsync(int id)
     {
-        var patientToRemove = GetPatientById(id);
-        if (patientToRemove != null)
+        var patient = await _context.Patients.FindAsync(id);
+        if (patient != null)
         {
-            patients.Remove(patientToRemove);
+            _context.Patients.Remove(patient);
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -1,10 +1,16 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using HospitalSystem.DTOs;
 using HospitalSystem.Interfaces;
-using HospitalSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HospitalSystem.Controllers;
 
-public class DoctorController : Controller 
+[Route("api/doctors")]
+[ApiController] 
+[Authorize]
+public class DoctorController : ControllerBase
 {
     private readonly IDoctorService _doctorService;
 
@@ -13,81 +19,55 @@ public class DoctorController : Controller
         _doctorService = doctorService;
     }
 
-    // MVC VIEW: The Main HTML Page 
-    [HttpGet("doctors")]
-    public IActionResult Index()
+    // GET: api/doctors
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<DoctorResponseDto>>> GetDoctors()
     {
-        var doctors = _doctorService.GetAllDoctors();
-        return View(doctors);
+        var doctors = await _doctorService.GetAllDoctorsAsync();
+        return Ok(doctors);
     }
 
-//  Show the empty HTML Form in the browser
-    [HttpGet("doctors/create")]
-    public IActionResult CreateWeb()
+    // GET: api/doctors/5
+    [HttpGet("{id}")]
+    public async Task<ActionResult<DoctorResponseDto>> GetDoctor(int id)
     {
-        return View("Create"); 
-    }
-
-    // Catch the data when the user clicks "Submit" on the webpage
-    [HttpPost("doctors/create")]
-    public IActionResult CreateWeb([FromForm] Doctor doctor)
-    {
-        // Add the doctor the list
-        _doctorService.AddDoctor(doctor);
+        var doctor = await _doctorService.GetDoctorByIdAsync(id);
         
-        // Refresh the page to show the updated list
-        return RedirectToAction("Index"); 
-    }
-
-
-
-
-
-
-    [HttpGet("api/doctors")]
-    public IActionResult GetAllApi()
-    {
-        var doctors = _doctorService.GetAllDoctors();
-        return Ok(doctors); 
-    }
-
-    // API ENDPOINT
-    [HttpGet("api/doctors/{id}")]
-    public IActionResult GetById(int id)
-    {
-        var doctor = _doctorService.GetDoctorById(id);
-        if (doctor == null) return NotFound();
+        if (doctor == null)
+        {
+            return NotFound();
+        }
+        
         return Ok(doctor);
     }
 
-    // 3. API ENDPOINT
-    [HttpPost("api/doctors")]
-    public IActionResult Create([FromBody] Doctor doctor)
+    // POST: api/doctors
+    [HttpPost]
+    public async Task<IActionResult> CreateDoctor([FromBody] DoctorCreateDto doctorDto)
     {
-        var newDoctor = _doctorService.AddDoctor(doctor);
-        return Ok(newDoctor);
+        await _doctorService.AddDoctorAsync(doctorDto);
+        return Ok(new { message = "Doctor created successfully!" });
     }
 
-    // API ENDPOINT
-    [HttpPut("api/doctors/{id}")]
-    public IActionResult Update(int id, [FromBody] Doctor doctor)
+    // PUT: api/doctors/5
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateDoctor(int id, [FromBody] DoctorUpdateDto doctorDto)
     {
-        if (id != doctor.Id) return BadRequest();
-        
-        var updatedDoctor = _doctorService.UpdateDoctor(doctor);
-        if (updatedDoctor == null) return NotFound();
-        
-        return Ok(updatedDoctor);
+        if (id != doctorDto.Id)
+        {
+            return BadRequest("The ID in the URL does not match the ID in the body.");
+        }
+
+        await _doctorService.UpdateDoctorAsync(doctorDto);
+        return Ok(new { message = "Doctor updated successfully!" });
     }
 
-    //API ENDPOINT
-    [HttpDelete("api/doctors/{id}")]
-    public IActionResult Delete(int id)
+    // DELETE: api/doctors/5
+    [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> DeleteDoctor(int id)
     {
-        var existingDoctor = _doctorService.GetDoctorById(id);
-        if (existingDoctor == null) return NotFound();
-
-        _doctorService.DeleteDoctor(id);
-        return NoContent();
+        await _doctorService.DeleteDoctorAsync(id);
+        return Ok(new { message = "Doctor deleted successfully!" });
     }
 }
