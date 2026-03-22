@@ -92,4 +92,103 @@ Uses HTTP-only cookies to protect JWT tokens from XSS attacks. Tokens are automa
 
 ---
 
+---
+
+## 📸 Postman API Verification & Testing
+
+Below is the comprehensive testing documentation demonstrating the successful implementation of all core requirements, data validation, and security protocols.
+
+### 🔐 Authentication & Security
+**1. User Registration (Success)**
+Demonstrates the creation of a new user account, automatically assigning default roles and hashing the password before saving to the SQL database.
+![User Registration](images/register.png)
+
+**2. User Login & Token Generation**
+Shows a successful authentication request. Notice the `HttpOnly` cookies generated in the response containing the JWT and the Refresh Token.
+![User Login](images/login.png)
+
+**3. Token Rotation (Refresh Endpoint)**
+Demonstrates the advanced security feature where a valid Refresh Token is automatically exchanged for a brand new JWT and a new Master Key, securing the session.
+![Refresh Token](images/refresh.png)
+
+**4. Role-Based Authorization Violation (403 Forbidden)**
+Proves the Identity framework is actively blocking standard users from accessing `Admin-Only` endpoints (e.g., attempting to delete a doctor without Admin privileges).
+![403 Forbidden](images/forbidden.png)
+
+---
+
+### 🩺 Doctor Management
+**5. Create New Doctor (200 OK)**
+Successfully adding a new doctor to the database using the Create DTO.
+![Create Doctor](images/create-doctor.png)
+
+**6. DTO Data Validation Rule (400 Bad Request)**
+Demonstrates the API catching invalid data (e.g., missing specialty, name too short) and rejecting the request before it reaches the database.
+![Doctor Validation Error](images/doctor-validation.png)
+
+**7. Get All Doctors**
+Retrieves the full list of available doctors using LINQ `.AsNoTracking()` for optimized read performance.
+![Get All Doctors](images/get-doctors.png)
+
+**8. Get Doctor By ID**
+Retrieves a specific doctor's details mapped cleanly to a Response DTO.
+![Get Doctor by ID](images/doctor-by-id.png)
+
+**9. Update Doctor Details**
+Successfully modifying an existing doctor's record using the PUT method.
+![Update Doctor](images/update-doctor.png)
+
+**10. Delete Doctor**
+Successfully removing a doctor's record from the SQL database (Admin action).
+![Delete Doctor](images/delete-doctor.png)
+
+---
+
+### 🤒 Patient Management
+**11. Create New Patient**
+Adding a new patient record to the system.
+![Create Patient](images/create-patient.png)
+
+**12. Get All Patients**
+Retrieving the list of registered patients.
+![Get All Patients](images/get-patients.png)
+
+**13. Get Patient By ID**
+Viewing a specific patient's secure medical profile.
+![Get Patient by ID](images/patient-by-id.png)
+
+**14. Update Patient Details**
+Modifying a patient's diagnostic information.
+![Update Patient](images/update-patient.png)
+
+**15. Delete Patient Record**
+Removing a patient from the system.
+![Delete Patient](images/delete-patient.png)
+
+---
+
+### 📅 Appointment Scheduling
+**16. Create Appointment**
+Successfully booking an appointment by linking a valid `PatientId` and `DoctorId`, demonstrating Entity Framework relational mapping.
+![Create Appointment](images/create-appointment.png)
+
+**17. Get All Appointments**
+Viewing the active hospital schedule.
+![Get All Appointments](images/get-appointments.png)
+
+**18. Update Appointment Status**
+Modifying the date, time, or reason for an existing scheduled appointment.
+![Update Appointment](images/update-appointment.png)
+
+**19. Delete/Cancel Appointment**
+Removing an appointment from the database.
+![Delete Appointment](images/delete-appointment.png)
+
+---
+
+### ⚙️ Background Automation (Bonus Requirement)
+**20. Hangfire Cron Job Scheduler**
+Demonstrates the successful integration of the Hangfire dashboard. It shows the `DatabaseCleanupJob` successfully registered and scheduled to run automatically on a daily cron trigger (`0 0 * * *`) to purge outdated database records.
+![Hangfire Dashboard](images/hangfire.png)
+
 Developed by Felopater Ashraf.
