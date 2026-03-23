@@ -67,8 +67,7 @@ dotnet ef database update
 dotnet run
 ```
 
-5. **Access the Dashboards:**
-- Swagger: http://localhost:5087/swagger
+5. **Access the Dashboard:**
 - Hangfire: http://localhost:5087/hangfire
 
 ---
