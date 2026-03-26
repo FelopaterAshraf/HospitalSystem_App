@@ -10,7 +10,7 @@ A robust, layered-architecture Hospital Management System built with **ASP.NET C
 1. Features
 2. Tech Stack
 3. Project Structure
-4. Installation]
+4. Installation
 5. Security Architecture
 6. API Documentation
 
