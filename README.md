@@ -7,12 +7,12 @@ A robust, layered-architecture Hospital Management System built with **ASP.NET C
 ---
 
 ## 📑 Table of Contents
-1. [Features](#-features)
-2. [Tech Stack](#-tech-stack)
-3. [Project Structure](#-project-structure)
-4. [Installation](#-installation)
-5. [Security Architecture](#-security-architecture-why-http-only-cookies)
-6. [API Documentation](#-api-documentation)
+1. [Features](#features)
+2. [Tech Stack](#tech-stack)
+3. [Project Structure](#project-structure)
+4. [Installation](#installation)
+5. [Security Architecture](#security-architecture)
+6. [API Documentation](#api-documentation-highlights)
 
 ---
 
