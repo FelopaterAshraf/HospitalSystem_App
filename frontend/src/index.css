@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-dark: #114b43;
+  --color-brand-primary: #108970;
+  --color-brand-light: #f3f6f8;
+}
+
+body {
+  background-color: var(--color-brand-light);
+}

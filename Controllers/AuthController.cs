@@ -91,6 +91,7 @@ public class AuthController : ControllerBase
             // Get the user's roles from the database
             var userRoles = await _userManager.GetRolesAsync(user);
 
+            // claims is a piece of information about the user
             var authClaims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Email!),
@@ -114,14 +115,16 @@ public class AuthController : ControllerBase
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
             );
 
+
+            //Now the token is ready as text to send/store
             var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-            // Save the JWT inside an HTTP Cookie (Instructor's Method)
+            // Save the JWT inside an HTTP Cookie 
             Response.Cookies.Append("jwt", tokenString, new CookieOptions
             {
                 HttpOnly = true, 
                 Secure = true,
-                SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.Strict, // This allows cross-site cookies, which is necessary if your frontend and backend are on different domains. Adjust as needed for your security requirements.
                 Expires = DateTime.Now.AddHours(3)
             });
 
@@ -140,7 +143,13 @@ public class AuthController : ControllerBase
                 Expires = DateTime.Now.AddDays(7)
             });
 
-            return Ok(new { message = "Logged in successfully! Cookie generated." });
+            var primaryRole = userRoles.FirstOrDefault() ?? "User";
+            
+            return Ok(new { 
+                message = "Logged in successfully! Cookie generated.",
+                fullName = user.FullName,
+                role = primaryRole
+            });
         }
         
         return Unauthorized(new { error = "Invalid email or password." });
@@ -150,18 +159,18 @@ public class AuthController : ControllerBase
     [HttpPost("refresh")]
     public async Task<IActionResult> Refresh()
     {
-        // 1. Get the token from the cookie
+        //  Get the token from the cookie
         if (!Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
             return Unauthorized(new { error = "No refresh token found." });
 
-        // 2. Find the user
+        //  Find the user
         var user = _userManager.Users.FirstOrDefault(u => u.RefreshToken == refreshToken);
         
-        // 3. Check if valid
+        //  Check if valid
         if (user == null || user.RefreshTokenExpiryTime <= DateTime.Now)
             return Unauthorized(new { error = "Invalid or expired refresh token." });
 
-        // 4. Generate new JWT Claims
+        //  Generate new JWT Claims
         var userRoles = await _userManager.GetRolesAsync(user);
         var authClaims = new List<Claim>
         {
@@ -170,7 +179,7 @@ public class AuthController : ControllerBase
         };
         foreach (var userRole in userRoles) authClaims.Add(new Claim(ClaimTypes.Role, userRole));
 
-        // 5. Create new JWT Token
+        //  Create new JWT Token
         var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
         var token = new JwtSecurityToken(
             issuer: _configuration["Jwt:Issuer"], audience: _configuration["Jwt:Audience"],
@@ -179,20 +188,43 @@ public class AuthController : ControllerBase
         );
         var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-        // 6. Generate new Refresh Token (Rotation Security)
+        //  Generate new Refresh Token (Rotation Security)
         var newRefreshToken = GenerateRefreshToken();
         user.RefreshToken = newRefreshToken;
         user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
         await _userManager.UpdateAsync(user);
 
-        // 7. Update both cookies
+        //  Update both cookies
         Response.Cookies.Append("jwt", tokenString, new CookieOptions { HttpOnly = true, Secure = true, SameSite = SameSiteMode.Strict, Expires = DateTime.Now.AddHours(3) });
         Response.Cookies.Append("refreshToken", newRefreshToken, new CookieOptions { HttpOnly = true, Secure = true, SameSite = SameSiteMode.Strict, Expires = DateTime.Now.AddDays(7) });
 
         return Ok(new { message = "Session renewed successfully!" });
+        
     }
 
+    [HttpPost("logout")]
+    public IActionResult Logout()
+    {
+        // Destroy the JWT cookie by expiring it immediately
+        Response.Cookies.Append("jwt", "", new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTime.Now.AddDays(-1)
+        });
 
+        // Destroy the Refresh Token cookie
+        Response.Cookies.Append("refreshToken", "", new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTime.Now.AddDays(-1)
+        });
+
+        return Ok(new { message = "Logged out successfully. Cookies destroyed." });
+    }
 
 
 

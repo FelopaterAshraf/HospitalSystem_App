@@ -1,0 +1,110 @@
+import { useState, useEffect } from 'react';
+import patientService from '../services/patientService';
+import { useNavigate, useParams, Link } from 'react-router-dom';
+import { ArrowLeft, User, CheckCircle2, AlertCircle } from 'lucide-react';
+
+export default function EditPatient() {
+    const { id } = useParams(); 
+    const navigate = useNavigate();
+
+    const [name, setName] = useState('');
+    const [diagnosis, setDiagnosis] = useState('');
+    
+    const [status, setStatus] = useState({ type: '', message: '' }); 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchPatient = async () => {
+            try {
+                const response = await patientService.getById(id);
+                setName(response.data.name);
+                setDiagnosis(response.data.diagnosis);
+                setIsLoading(false);
+            } catch (error) {
+                setStatus({ type: 'error', message: 'Failed to load patient data.' });
+                setIsLoading(false);
+            }
+        };
+        fetchPatient();
+    }, [id]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        setStatus({ type: '', message: '' });
+
+        try {
+            await patientService.update(id, { id, name, diagnosis });
+            setStatus({ type: 'success', message: 'Patient updated successfully! Redirecting...' });
+            setTimeout(() => navigate('/patients'), 1500);
+        } catch (err) {
+            setStatus({ type: 'error', message: 'Failed to update patient.' });
+            setIsSubmitting(false);
+        }
+    };
+
+    if (isLoading) return <div className="p-8 text-center text-gray-500 animate-pulse">Loading patient data...</div>;
+
+    return (
+        <div className="animate-fade-in max-w-2xl mx-auto mt-10">
+            <div className="mb-6">
+                <Link to="/patients" className="text-gray-500 hover:text-brand-primary flex items-center gap-2 w-fit transition-colors">
+                    <ArrowLeft size={20} />
+                    Back to Records
+                </Link>
+            </div>
+
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                <div className="flex items-center gap-4 mb-8 border-b border-gray-100 pb-6">
+                    <div className="bg-purple-50 p-3 rounded-xl text-purple-600">
+                        <User size={28} />
+                    </div>
+                    <div>
+                        <h2 className="text-2xl font-bold text-gray-800">Edit Patient Record</h2>
+                        <p className="text-gray-500 text-sm">Update information for Patient ID: {id}</p>
+                    </div>
+                </div>
+
+                <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                    <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Patient's Full Name</label>
+                        <input 
+                            type="text" 
+                            value={name} 
+                            onChange={(e) => setName(e.target.value)} 
+                            required 
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all"
+                        />
+                    </div>
+                    
+                    <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Current Diagnosis</label>
+                        <input 
+                            type="text" 
+                            value={diagnosis} 
+                            onChange={(e) => setDiagnosis(e.target.value)} 
+                            required 
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all"
+                        />
+                    </div>
+
+                    {status.message && (
+                        <div className={`p-4 rounded-xl flex items-center gap-3 ${status.type === 'success' ? 'bg-purple-50 text-purple-600' : 'bg-red-50 text-red-600'}`}>
+                            {status.type === 'success' ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
+                            <span className="font-medium">{status.message}</span>
+                        </div>
+                    )}
+
+                    <button 
+                        type="submit" 
+                        disabled={isSubmitting}
+                        className={`mt-4 py-3.5 rounded-xl font-bold text-white transition-all shadow-sm ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-purple-600 hover:bg-purple-700'}`}
+                    >
+                        {isSubmitting ? 'Saving Changes...' : 'Save Updates'}
+                    </button>
+                </form>
+            </div>
+        </div>
+    );
+}

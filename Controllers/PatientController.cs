@@ -41,6 +41,7 @@ public class PatientController : ControllerBase
 
     // POST: api/patients
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreatePatient([FromBody] PatientCreateDto patientDto)
     {
         await _patientService.AddPatientAsync(patientDto);
@@ -49,6 +50,7 @@ public class PatientController : ControllerBase
 
     // PUT: api/patients/5
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdatePatient(int id, [FromBody] PatientUpdateDto patientDto)
     {
         if (id != patientDto.Id)

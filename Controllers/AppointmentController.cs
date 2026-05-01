@@ -32,6 +32,7 @@ public class AppointmentController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreateAppointment([FromBody] AppointmentCreateDto appointmentDto)
     {
         try
@@ -50,6 +51,7 @@ public class AppointmentController : ControllerBase
 
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateAppointment(int id, [FromBody] AppointmentUpdateDto appointmentDto)
     {
         if (id != appointmentDto.Id) 
@@ -77,6 +79,7 @@ public class AppointmentController : ControllerBase
 
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteAppointment(int id)
     {
         var appointment = await _appointmentService.GetAppointmentByIdAsync(id);
