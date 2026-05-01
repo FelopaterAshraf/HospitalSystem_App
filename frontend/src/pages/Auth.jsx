@@ -22,26 +22,25 @@ export default function Auth() {
 
         try {
             if (isLogin) {
-                // 1. Catch the response from the backend
                 const res = await authService.login({ email: formData.email, password: formData.password });
                 
-                // 2. Save the name and role to localStorage
+                // Store the role, name, AND the VIP wristband!
                 localStorage.setItem('userName', res.data.fullName);
                 localStorage.setItem('userRole', res.data.role);
+                localStorage.setItem('isAuthenticated', 'true'); // <--- THE FRIEND'S FIX
                 
                 navigate('/dashboard');
             } else {
                 await authService.register(formData);
-                
-                // Do the exact same thing for the auto-login after registration!
                 const res = await authService.login({ email: formData.email, password: formData.password });
                 
                 localStorage.setItem('userName', res.data.fullName);
                 localStorage.setItem('userRole', res.data.role);
+                localStorage.setItem('isAuthenticated', 'true'); // <--- THE FRIEND'S FIX
                 
                 navigate('/dashboard');
             }
-            } catch (err) {
+        } catch (err) {
             // Safely handle .NET error objects
             const responseData = err.response?.data;
             

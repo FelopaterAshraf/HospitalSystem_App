@@ -17,6 +17,10 @@ export default function Sidebar() {
         } catch (error) {
             console.error("Logout error", error);
         } finally {
+            // --- ADD THESE TWO LINES TO DESTROY THE VIP WRISTBAND ---
+            localStorage.removeItem('isAuthenticated');
+            localStorage.removeItem('userRole');
+            // --------------------------------------------------------
             localStorage.removeItem('userName'); 
             
             // Kick them back to the login screen

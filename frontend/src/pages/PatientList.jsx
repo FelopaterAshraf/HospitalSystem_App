@@ -7,6 +7,8 @@ export default function PatientList() {
     const [patients, setPatients] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    
+    // Admin check is ready to go!
     const userRole = localStorage.getItem('userRole');
     const isAdmin = userRole === 'Admin';
 
@@ -47,12 +49,16 @@ export default function PatientList() {
                     <h1 className="text-3xl font-bold text-gray-800 mb-2">Patient Records</h1>
                     <p className="text-gray-500">Manage hospital admissions and diagnoses.</p>
                 </div>
-                <Link to="/patients/new">
-                    <button className="bg-brand-primary hover:bg-brand-dark text-white px-5 py-2.5 rounded-xl font-medium transition-colors flex items-center gap-2 shadow-sm">
-                        <Plus size={20} />
-                        Register Patient
-                    </button>
-                </Link>
+                
+                {/* 1. HIDE THE REGISTER BUTTON */}
+                {isAdmin && (
+                    <Link to="/patients/new">
+                        <button className="bg-brand-primary hover:bg-brand-dark text-white px-5 py-2.5 rounded-xl font-medium transition-colors flex items-center gap-2 shadow-sm">
+                            <Plus size={20} />
+                            Register Patient
+                        </button>
+                    </Link>
+                )}
             </div>
 
             {/* Data Table */}
@@ -62,13 +68,18 @@ export default function PatientList() {
                         <tr className="bg-gray-50/50 border-b border-gray-100 text-gray-500 text-sm tracking-wide">
                             <th className="px-6 py-4 font-medium">Patient Name</th>
                             <th className="px-6 py-4 font-medium">Current Diagnosis</th>
-                            <th className="px-6 py-4 font-medium text-right">Actions</th>
+                            
+                            {/* 2. HIDE THE ACTIONS HEADER */}
+                            {isAdmin && (
+                                <th className="px-6 py-4 font-medium text-right">Actions</th>
+                            )}
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                         {patients.length === 0 ? (
                             <tr>
-                                <td colSpan="3" className="px-6 py-8 text-center text-gray-400">
+                                {/* Adjust colSpan so it doesn't look weird when Actions column is hidden */}
+                                <td colSpan={isAdmin ? "3" : "2"} className="px-6 py-8 text-center text-gray-400">
                                     No patients found. Register one to get started!
                                 </td>
                             </tr>
@@ -88,23 +99,27 @@ export default function PatientList() {
                                             {patient.diagnosis}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <Link to={`/patients/edit/${patient.id}`}>
+                                    
+                                    {/* 3. HIDE THE EDIT AND DELETE BUTTONS */}
+                                    {isAdmin && (
+                                        <td className="px-6 py-4 text-right">
+                                            <Link to={`/patients/edit/${patient.id}`}>
+                                                <button 
+                                                    className="text-gray-400 hover:text-purple-500 hover:bg-purple-50 p-2 rounded-lg transition-colors mr-2"
+                                                    title="Edit Patient"
+                                                >
+                                                    <Edit size={20} />
+                                                </button>
+                                            </Link>
                                             <button 
-                                                className="text-gray-400 hover:text-purple-500 hover:bg-purple-50 p-2 rounded-lg transition-colors mr-2"
-                                                title="Edit Patient"
+                                                onClick={() => handleDelete(patient.id)}
+                                                className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors"
+                                                title="Delete Patient"
                                             >
-                                                <Edit size={20} />
+                                                <Trash2 size={20} />
                                             </button>
-                                        </Link>
-                                        <button 
-                                            onClick={() => handleDelete(patient.id)}
-                                            className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors"
-                                            title="Delete Patient"
-                                        >
-                                            <Trash2 size={20} />
-                                        </button>
-                                    </td>
+                                        </td>
+                                    )}
                                 </tr>
                             ))
                         )}
