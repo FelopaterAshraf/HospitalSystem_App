@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import doctorService from '../services/doctorService';
 import { useNavigate, Link } from 'react-router-dom';
+import { getErrorMessage } from '../services/errorHelper';
 import { ArrowLeft, UserPlus, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export default function AddDoctor() {
@@ -20,7 +21,7 @@ export default function AddDoctor() {
             setStatus({ type: 'success', message: 'Doctor added successfully! Redirecting...' });
             setTimeout(() => navigate('/doctors'), 1500);
         } catch (err) {
-            setStatus({ type: 'error', message: 'Failed to add doctor. Please check your data.' });
+            setStatus({ type: 'error', message: getErrorMessage(err, 'Failed to add doctor.') });
             setIsSubmitting(false);
         }
     };

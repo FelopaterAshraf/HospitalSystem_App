@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import doctorService from '../services/doctorService';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { getErrorMessage } from '../services/errorHelper';
 import { ArrowLeft, UserCog, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export default function EditDoctor() {
@@ -22,9 +23,9 @@ export default function EditDoctor() {
                 setName(response.data.name);
                 setSpecialty(response.data.specialty);
                 setIsLoading(false);
-            } catch (error) {
-                setStatus({ type: 'error', message: 'Failed to load doctor data. They may have been deleted.' });
-                setIsLoading(false);
+            } catch (err) {
+                setStatus({ type: 'error', message: getErrorMessage(err, 'Failed to update doctor.') });
+                setIsSubmitting(false);
             }
         };
         fetchDoctor();

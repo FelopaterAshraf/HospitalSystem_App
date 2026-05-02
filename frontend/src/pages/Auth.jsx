@@ -87,6 +87,7 @@ export default function Auth() {
                                     name="fullName"
                                     type="text" 
                                     placeholder="Full Name" 
+                                    value={formData.fullName} 
                                     onChange={handleChange}
                                     required
                                     className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all"
@@ -100,6 +101,7 @@ export default function Auth() {
                                 name="email"
                                 type="email" 
                                 placeholder="Email Address" 
+                                value={formData.email}  
                                 onChange={handleChange}
                                 required
                                 className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all"
@@ -111,7 +113,8 @@ export default function Auth() {
                             <input 
                                 name="password"
                                 type="password" 
-                                placeholder="Password" 
+                                placeholder="Password"  
+                                value={formData.password} 
                                 onChange={handleChange}
                                 required
                                 className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all"

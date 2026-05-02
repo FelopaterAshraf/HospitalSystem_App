@@ -1,6 +1,6 @@
 import { 
     Activity, LayoutDashboard, Users, Calendar, 
-    CreditCard, UserCircle, BarChart2, HelpCircle, 
+    UserCircle, BarChart2, HelpCircle, 
     Settings, Flag, LogOut 
 } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom'; 

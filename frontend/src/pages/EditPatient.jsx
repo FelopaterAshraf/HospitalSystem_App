@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import patientService from '../services/patientService';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { getErrorMessage } from '../services/errorHelper';
 import { ArrowLeft, User, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export default function EditPatient() {
@@ -21,9 +22,9 @@ export default function EditPatient() {
                 setName(response.data.name);
                 setDiagnosis(response.data.diagnosis);
                 setIsLoading(false);
-            } catch (error) {
-                setStatus({ type: 'error', message: 'Failed to load patient data.' });
-                setIsLoading(false);
+            } catch (err) {
+                setStatus({ type: 'error', message: getErrorMessage(err, 'Failed to update patient.') });
+                setIsSubmitting(false);
             }
         };
         fetchPatient();

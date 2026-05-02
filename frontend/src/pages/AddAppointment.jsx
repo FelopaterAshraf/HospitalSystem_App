@@ -3,6 +3,7 @@ import appointmentService from '../services/appointmentService';
 import doctorService from '../services/doctorService';
 import patientService from '../services/patientService';
 import { useNavigate, Link } from 'react-router-dom';
+import { getErrorMessage } from '../services/errorHelper';
 import { ArrowLeft, CalendarPlus, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export default function AddAppointment() {
@@ -31,8 +32,9 @@ export default function AddAppointment() {
                 ]);
                 setDoctors(docRes.data);
                 setPatients(patRes.data);
-            } catch (error) {
-                setStatus({ type: 'error', message: 'Failed to load doctors and patients for the menu.' });
+            } catch (err) {
+                setStatus({ type: 'error', message: getErrorMessage(err, 'Failed to book appointment.') });
+                setIsSubmitting(false);
             }
         };
         fetchDropdownData();

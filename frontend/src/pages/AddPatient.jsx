@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import patientService from '../services/patientService';
 import { useNavigate, Link } from 'react-router-dom';
+import { getErrorMessage } from '../services/errorHelper';
 import { ArrowLeft, UserPlus, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export default function AddPatient() {
@@ -20,9 +21,10 @@ export default function AddPatient() {
             setStatus({ type: 'success', message: 'Patient registered successfully! Redirecting...' });
             setTimeout(() => navigate('/patients'), 1500);
         } catch (err) {
-            setStatus({ type: 'error', message: 'Failed to register patient. Please try again.' });
+            setStatus({ type: 'error', message: getErrorMessage(err, 'Failed to register patient.') });
             setIsSubmitting(false);
         }
+
     };
 
     return (

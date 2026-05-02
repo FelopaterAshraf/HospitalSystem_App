@@ -3,6 +3,7 @@ import appointmentService from '../services/appointmentService';
 import doctorService from '../services/doctorService';
 import patientService from '../services/patientService';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { getErrorMessage } from '../services/errorHelper';
 import { ArrowLeft, Calendar, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export default function EditAppointment() {
@@ -51,9 +52,9 @@ export default function EditAppointment() {
                 }
 
                 setIsLoading(false);
-            } catch (error) {
-                setStatus({ type: 'error', message: 'Failed to load appointment data.' });
-                setIsLoading(false);
+            } catch (err) {
+                setStatus({ type: 'error', message: getErrorMessage(err, 'Failed to update appointment.') });
+                setIsSubmitting(false);
             }
         };
         fetchAllData();

@@ -92,15 +92,16 @@ export default function Dashboard() {
                     textColor="text-purple-600" 
                 />
             </div>
-
+            
             {/* Quick Actions Grid */}
+            {isAdmin && (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mt-8">
                 <h3 className="text-xl font-bold text-gray-800 mb-6">Quick Actions</h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     
                     
-                    {/* 1. Book Appointment (VISIBLE TO ALL USERS) */}
+                    {/* 1. Book Appointment (ADMIN ONLY) */}
                     <Link to="/appointments/new" className="flex flex-col items-center justify-center p-6 bg-orange-50 rounded-2xl hover:bg-orange-100 transition-colors border border-orange-100 group">
                         <div className="bg-orange-500 text-white p-4 rounded-full mb-4 group-hover:scale-110 transition-transform shadow-md shadow-orange-200">
                             <Calendar size={24} />
@@ -110,7 +111,7 @@ export default function Dashboard() {
                     </Link>
 
                     {/* 2. Register Patient (ADMIN ONLY) */}
-                    {isAdmin && (
+                   
                         <Link to="/patients/new" className="flex flex-col items-center justify-center p-6 bg-purple-50 rounded-2xl hover:bg-purple-100 transition-colors border border-purple-100 group">
                             <div className="bg-purple-600 text-white p-4 rounded-full mb-4 group-hover:scale-110 transition-transform shadow-md shadow-purple-200">
                                 <Users size={24} />
@@ -118,10 +119,10 @@ export default function Dashboard() {
                             <span className="font-semibold text-purple-900">Register Patient</span>
                             <span className="text-sm text-purple-600 mt-1">Add new patient records</span>
                         </Link>
-                    )}
+                    
 
                     {/* 3. Add Doctor (ADMIN ONLY) */}
-                    {isAdmin && (
+                    
                         <Link to="/doctors/new" className="flex flex-col items-center justify-center p-6 bg-blue-50 rounded-2xl hover:bg-blue-100 transition-colors border border-blue-100 group">
                             <div className="bg-blue-600 text-white p-4 rounded-full mb-4 group-hover:scale-110 transition-transform shadow-md shadow-blue-200">
                                 <UserCircle size={24} />
@@ -129,10 +130,11 @@ export default function Dashboard() {
                             <span className="font-semibold text-blue-900">Add Doctor</span>
                             <span className="text-sm text-blue-600 mt-1">Onboard new medical staff</span>
                         </Link>
-                    )}
+                    
 
                 </div>
             </div>
+            )}
         </div>
     );
 }
