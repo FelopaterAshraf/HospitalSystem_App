@@ -27,7 +27,7 @@ export default function Auth() {
                 // Store the role, name, AND the VIP wristband!
                 localStorage.setItem('userName', res.data.fullName);
                 localStorage.setItem('userRole', res.data.role);
-                localStorage.setItem('isAuthenticated', 'true'); // <--- THE FRIEND'S FIX
+                localStorage.setItem('isAuthenticated', 'true'); 
                 
                 navigate('/dashboard');
             } else {
@@ -36,7 +36,7 @@ export default function Auth() {
                 
                 localStorage.setItem('userName', res.data.fullName);
                 localStorage.setItem('userRole', res.data.role);
-                localStorage.setItem('isAuthenticated', 'true'); // <--- THE FRIEND'S FIX
+                localStorage.setItem('isAuthenticated', 'true'); 
                 
                 navigate('/dashboard');
             }

@@ -45,9 +45,21 @@ builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
-
+    
 var jwtKey = builder.Configuration["Jwt:Key"];
+//------------------------------------------------------------------------------------------
 
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        return Task.CompletedTask;
+    };
+});
+
+//------------------------------------------------------------------------------------------
 
 
 

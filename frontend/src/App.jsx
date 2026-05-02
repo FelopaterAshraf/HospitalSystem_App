@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; //enables client-side routing
 import DashboardLayout from './components/DashboardLayout';
 import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';

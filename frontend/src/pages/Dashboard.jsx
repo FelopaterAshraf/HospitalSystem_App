@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // <-- We need this for the Quick Action links!
+import { Link } from 'react-router-dom';
 import doctorService from '../services/doctorService';
 import patientService from '../services/patientService';
 import appointmentService from '../services/appointmentService';
 import { Users, UserCircle, Calendar, Activity } from 'lucide-react';
 
 export default function Dashboard() {
-    // 1. We added the userName state here!
     const [userName, setUserName] = useState('Admin'); 
+    const userRole = localStorage.getItem('userRole');
+    const isAdmin = userRole === 'Admin';
     
     const [stats, setStats] = useState({
         doctors: 0,
@@ -17,31 +18,13 @@ export default function Dashboard() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // --- 2. Decode the Token to get the user's name ---
-        const token = localStorage.getItem('token');
-        if (token) {
-            try {
-                const base64Url = token.split('.')[1];
-                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
-
-                const decodedToken = JSON.parse(jsonPayload);
-                
-                const extractedName = 
-                    decodedToken.name || 
-                    decodedToken.unique_name || 
-                    decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"] || 
-                    'Admin';
-                    
-                setUserName(extractedName);
-            } catch (error) {
-                console.error("Could not read name from token", error);
-            }
+        // Since we are using the new LocalStorage method, let's grab the name 
+        // straight from LocalStorage instead of decoding a token! Much cleaner.
+        const storedName = localStorage.getItem('userName');
+        if (storedName) {
+            setUserName(storedName);
         }
 
-        // --- 3. Fetch Dashboard Stats ---
         const fetchDashboardData = async () => {
             try {
                 const [doctorRes, patientRes, appointmentRes] = await Promise.all([
@@ -81,7 +64,6 @@ export default function Dashboard() {
         <div className="animate-fade-in">
             {/* Header Section */}
             <div className="mb-8">
-                {/* 4. We inject the dynamic userName here! */}
                 <h1 className="text-3xl font-bold text-gray-800 mb-2">Hello, {userName} 👋</h1>
                 <p className="text-gray-500">Here is the latest update on your hospital data.</p>
             </div>
@@ -111,11 +93,14 @@ export default function Dashboard() {
                 />
             </div>
 
-            {/* 5. The New Quick Actions Grid! */}
+            {/* Quick Actions Grid */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mt-8">
                 <h3 className="text-xl font-bold text-gray-800 mb-6">Quick Actions</h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    
+                    {/* 1. Book Appointment (VISIBLE TO ALL USERS) */}
                     <Link to="/appointments/new" className="flex flex-col items-center justify-center p-6 bg-orange-50 rounded-2xl hover:bg-orange-100 transition-colors border border-orange-100 group">
                         <div className="bg-orange-500 text-white p-4 rounded-full mb-4 group-hover:scale-110 transition-transform shadow-md shadow-orange-200">
                             <Calendar size={24} />
@@ -124,21 +109,28 @@ export default function Dashboard() {
                         <span className="text-sm text-orange-600 mt-1">Schedule a new visit</span>
                     </Link>
 
-                    <Link to="/patients/new" className="flex flex-col items-center justify-center p-6 bg-purple-50 rounded-2xl hover:bg-purple-100 transition-colors border border-purple-100 group">
-                        <div className="bg-purple-600 text-white p-4 rounded-full mb-4 group-hover:scale-110 transition-transform shadow-md shadow-purple-200">
-                            <Users size={24} />
-                        </div>
-                        <span className="font-semibold text-purple-900">Register Patient</span>
-                        <span className="text-sm text-purple-600 mt-1">Add new patient records</span>
-                    </Link>
+                    {/* 2. Register Patient (ADMIN ONLY) */}
+                    {isAdmin && (
+                        <Link to="/patients/new" className="flex flex-col items-center justify-center p-6 bg-purple-50 rounded-2xl hover:bg-purple-100 transition-colors border border-purple-100 group">
+                            <div className="bg-purple-600 text-white p-4 rounded-full mb-4 group-hover:scale-110 transition-transform shadow-md shadow-purple-200">
+                                <Users size={24} />
+                            </div>
+                            <span className="font-semibold text-purple-900">Register Patient</span>
+                            <span className="text-sm text-purple-600 mt-1">Add new patient records</span>
+                        </Link>
+                    )}
 
-                    <Link to="/doctors/new" className="flex flex-col items-center justify-center p-6 bg-blue-50 rounded-2xl hover:bg-blue-100 transition-colors border border-blue-100 group">
-                        <div className="bg-blue-600 text-white p-4 rounded-full mb-4 group-hover:scale-110 transition-transform shadow-md shadow-blue-200">
-                            <UserCircle size={24} />
-                        </div>
-                        <span className="font-semibold text-blue-900">Add Doctor</span>
-                        <span className="text-sm text-blue-600 mt-1">Onboard new medical staff</span>
-                    </Link>
+                    {/* 3. Add Doctor (ADMIN ONLY) */}
+                    {isAdmin && (
+                        <Link to="/doctors/new" className="flex flex-col items-center justify-center p-6 bg-blue-50 rounded-2xl hover:bg-blue-100 transition-colors border border-blue-100 group">
+                            <div className="bg-blue-600 text-white p-4 rounded-full mb-4 group-hover:scale-110 transition-transform shadow-md shadow-blue-200">
+                                <UserCircle size={24} />
+                            </div>
+                            <span className="font-semibold text-blue-900">Add Doctor</span>
+                            <span className="text-sm text-blue-600 mt-1">Onboard new medical staff</span>
+                        </Link>
+                    )}
+
                 </div>
             </div>
         </div>
