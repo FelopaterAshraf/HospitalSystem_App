@@ -10,6 +10,7 @@ export default function Dashboard() {
     const userRole = localStorage.getItem('userRole');
     const isAdmin = userRole === 'Admin';
     
+    // Stores the logged-in user's name for the welcome message
     const [stats, setStats] = useState({
         doctors: 0,
         patients: 0,
@@ -18,8 +19,7 @@ export default function Dashboard() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Since we are using the new LocalStorage method, let's grab the name 
-        // straight from LocalStorage instead of decoding a token! Much cleaner.
+        // straight from LocalStorage instead of decoding a token Much cleaner.
         const storedName = localStorage.getItem('userName');
         if (storedName) {
             setUserName(storedName);
@@ -27,7 +27,7 @@ export default function Dashboard() {
 
         const fetchDashboardData = async () => {
             try {
-                const [doctorRes, patientRes, appointmentRes] = await Promise.all([
+                const [doctorRes, patientRes, appointmentRes] = await Promise.all([ //promise.all Run multiple API requests at the same time, then wait until all of them finish.
                     doctorService.getAll(),
                     patientService.getAll(),
                     appointmentService.getAll()

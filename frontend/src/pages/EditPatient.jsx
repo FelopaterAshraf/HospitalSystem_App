@@ -100,7 +100,7 @@ export default function EditPatient() {
                     <button 
                         type="submit" 
                         disabled={isSubmitting}
-                        className={`mt-4 py-3.5 rounded-xl font-bold text-white transition-all shadow-sm ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-purple-600 hover:bg-purple-700'}`}
+                        className={`mt-4 py-3.5 rounded-xl font-bold text-white transition-all shadow-sm ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-brand-primary hover:bg-brand-dark'}`}
                     >
                         {isSubmitting ? 'Saving Changes...' : 'Save Updates'}
                     </button>

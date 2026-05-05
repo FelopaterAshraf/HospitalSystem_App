@@ -22,7 +22,7 @@ export default function AddAppointment() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
 
-    // Fetch doctors and patients as soon as the page loads!
+    // Fetch doctors and patients as soon as the page loads
     useEffect(() => {
         const fetchDropdownData = async () => {
             try {

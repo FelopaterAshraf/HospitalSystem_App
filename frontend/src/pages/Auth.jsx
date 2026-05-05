@@ -1,37 +1,38 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
+import { getErrorMessage } from '../services/errorHelper';
 import { Activity, Mail, Lock, UserPlus, LogIn, ChevronRight } from 'lucide-react';
 
 export default function Auth() {
     const [isLogin, setIsLogin] = useState(true);
     const [formData, setFormData] = useState({ email: '', password: '', fullName: '' });
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false); // t prevents multiple submissions.
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
 
+    // This function runs when the user changes any input field. It updates the formData state with the new value.
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault(); // Stops the browser from executing its default behavior of refreshing the entire page upon form submission.
         setLoading(true);
         setError('');
-
         try {
             if (isLogin) {
-                const res = await authService.login({ email: formData.email, password: formData.password });
+                const res = await authService.login({ email: formData.email, password: formData.password }); //sends the email and password to the backend.
                 
-                // Store the role, name, AND the VIP wristband!
+                // Store the role, name, AND the VIP wristband
                 localStorage.setItem('userName', res.data.fullName);
                 localStorage.setItem('userRole', res.data.role);
                 localStorage.setItem('isAuthenticated', 'true'); 
                 
                 navigate('/dashboard');
             } else {
-                await authService.register(formData);
+                await authService.register(formData); // First, we register the user with their full name, email, and password. If registration is successful, we immediately log them in.
                 const res = await authService.login({ email: formData.email, password: formData.password });
                 
                 localStorage.setItem('userName', res.data.fullName);
@@ -41,20 +42,8 @@ export default function Auth() {
                 navigate('/dashboard');
             }
         } catch (err) {
-            // Safely handle .NET error objects
-            const responseData = err.response?.data;
-            
-            if (typeof responseData === 'string') {
-                setError(responseData); // If backend sends a simple string
-            } else if (responseData && responseData.errors) {
-                // If .NET sends a validation object, grab the exact reason (e.g., "Passwords must have at least one non alphanumeric character.")
-                const firstErrorKey = Object.keys(responseData.errors)[0];
-                setError(responseData.errors[firstErrorKey][0]);
-            } else if (responseData && responseData.title) {
-                setError(responseData.title); // Fallback to the generic title
-            } else {
-                setError("Registration failed. Please check your details and try again.");
-            }
+            const cleanMessage = getErrorMessage(err, "Registration failed. Please check your details and try again.");
+            setError(cleanMessage);
         } finally {
             setLoading(false);
         }

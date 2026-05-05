@@ -10,5 +10,5 @@ export default function ProtectedRoute() {
     }
 
     // If they have it, render the nested dashboard routes
-    return <Outlet />;
+    return <Outlet />;  // is a special React Router placeholder. It essentially means: "Okay, render whatever child route they were actually trying to go to
 }

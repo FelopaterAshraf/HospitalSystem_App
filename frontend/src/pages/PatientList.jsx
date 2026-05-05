@@ -8,7 +8,7 @@ export default function PatientList() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     
-    // Admin check is ready to go!
+    
     const userRole = localStorage.getItem('userRole');
     const isAdmin = userRole === 'Admin';
 
@@ -34,7 +34,7 @@ export default function PatientList() {
             await patientService.delete(id);
             setPatients(patients.filter(p => p.id !== id));
         } catch (err) {
-            alert('Failed to delete patient. Admin rights required.');
+            setError('Failed to delete patient. Admin rights required.');
         }
     };
 

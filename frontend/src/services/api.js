@@ -5,25 +5,30 @@ const api = axios.create({
     withCredentials: true // Ensures HttpOnly cookies are sent
 });
 
+
 api.interceptors.response.use(
-    (response) => {
-        // If the request succeeds, just return the data normally
-        return response;
-    },
-    (error) => {
-        // If the  backend rejects the request because of a missing/expired cookie...
-        if (error.response && error.response.status === 401) {
-            
-            // Destroy the React VIP wristbands
-            localStorage.removeItem('isAuthenticated');
-            localStorage.removeItem('userName');
-            localStorage.removeItem('userRole');
-            
-            // Force the browser to redirect to the Login page
-            window.location.href = '/'; 
+    (response) => response,
+    async (error) => {
+        const isLoginRoute = error.config?.url?.includes('/auth/login');
+        const isRefreshRoute = error.config?.url?.includes('/auth/refresh');
+
+        if (error.response?.status === 401 && !isLoginRoute && !isRefreshRoute) {
+            try {
+                // Try to silently get a new token
+                await api.post('/auth/refresh');
+                // Retry the original request
+                return api(error.config);
+            } catch (refreshError) {
+                // Refresh also failed, session is truly dead — kick them out
+                localStorage.removeItem('isAuthenticated');
+                localStorage.removeItem('userName');
+                localStorage.removeItem('userRole');
+                window.location.href = '/';
+            }
         }
         return Promise.reject(error);
     }
 );
 
 export default api;
+

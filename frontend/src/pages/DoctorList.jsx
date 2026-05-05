@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import doctorService from '../services/doctorService';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom'; // React Router's tool for navigating between pages without refreshing the browser.
 import { Plus, Trash2, UserCircle, Edit } from 'lucide-react';
 
 export default function DoctorList() {
@@ -8,7 +8,7 @@ export default function DoctorList() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     
-    // You already did this perfectly!
+    
     const userRole = localStorage.getItem('userRole');
     const isAdmin = userRole === 'Admin';
     
@@ -34,7 +34,7 @@ export default function DoctorList() {
             await doctorService.delete(id);
             setDoctors(doctors.filter(d => d.id !== id));
         } catch (err) {
-            alert('Failed to delete. You might not have Admin privileges.');
+            setError('Failed to delete. You might not have Admin privileges.');
         }
     };
 

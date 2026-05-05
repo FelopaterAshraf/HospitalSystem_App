@@ -12,10 +12,9 @@ export default function AddDoctor() {
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsSubmitting(true);
+        e.preventDefault(); // Prevents the default form submission behavior
+        setIsSubmitting(true);  // Disables the submit button to prevent multiple submissions
         setStatus({ type: '', message: '' });
-
         try {
             await doctorService.create({ name, specialty });
             setStatus({ type: 'success', message: 'Doctor added successfully! Redirecting...' });

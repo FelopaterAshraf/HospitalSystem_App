@@ -7,8 +7,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
 
 export default function Sidebar() {
-    const location = useLocation();
-    const navigate = useNavigate(); 
+    const location = useLocation();  // This hook gives us access to the current URL path, which we can use to determine which link is active
+    const navigate = useNavigate();  //This is a programmatic steering wheel. Instead of waiting for a user to click a link, it allows your code to force the browser to change pages whenever you tell it to. we'll use it to kick the user back to the login screen after they log out.
     // The Logout Function
     const handleLogout = async () => {
         try {

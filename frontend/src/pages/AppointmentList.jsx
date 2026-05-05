@@ -8,7 +8,7 @@ export default function AppointmentList() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    // --- The Admin Check ---
+    
     const userRole = localStorage.getItem('userRole');
     const isAdmin = userRole === 'Admin';
 
@@ -34,7 +34,7 @@ export default function AppointmentList() {
             await appointmentService.delete(id);
             setAppointments(appointments.filter(a => a.id !== id));
         } catch (err) {
-            alert('Failed to delete appointment. Admin rights required.');
+            setError('Failed to delete appointment. Admin rights required.');
         }
     };
 
@@ -102,7 +102,6 @@ export default function AppointmentList() {
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-2 text-slate-600">
                                             <Clock size={16} className="text-brand-primary"/>
-                                            {/* Note: Adjust 'appointmentDate' if your C# DTO uses a slightly different name like 'date' */}
                                             <span>{new Date(appointment.appointmentDate).toLocaleString()}</span>
                                         </div>
                                     </td>
