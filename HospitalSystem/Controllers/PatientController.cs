@@ -1,7 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using HospitalSystem.DTOs;
 using HospitalSystem.Interfaces;
+using HospitalSystem.Models;
+using HospitalSystem.Database;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace HospitalSystem.Controllers;
 
@@ -11,10 +15,14 @@ namespace HospitalSystem.Controllers;
 public class PatientController : ControllerBase
 {
     private readonly IPatientService _patientService;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly ApplicationDbContext _context;
 
-    public PatientController(IPatientService patientService)
+    public PatientController(IPatientService patientService, UserManager<ApplicationUser> userManager, ApplicationDbContext context)
     {
         _patientService = patientService;
+        _userManager = userManager;
+        _context = context;
     }
 
     // GET: api/patients
@@ -69,5 +77,24 @@ public class PatientController : ControllerBase
     {
         await _patientService.DeletePatientAsync(id);
         return Ok(new { message = "Patient deleted successfully!" });
+    }
+
+    // PUT: api/patients/5/link-user
+    [HttpPut("{id}/link-user")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> LinkUser(int id, [FromBody] LinkUserDto dto)
+    {
+        var patient = await _context.Patients.FindAsync(id);
+        if (patient == null)
+            return NotFound(new { error = $"Patient with ID {id} not found." });
+
+        var user = await _userManager.FindByIdAsync(dto.UserId);
+        if (user == null)
+            return NotFound(new { error = $"User with ID {dto.UserId} not found." });
+
+        patient.UserId = dto.UserId;
+        await _context.SaveChangesAsync();
+
+        return Ok(new { message = $"User linked to Patient #{id}." });
     }
 }

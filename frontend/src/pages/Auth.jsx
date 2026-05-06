@@ -25,21 +25,24 @@ export default function Auth() {
             if (isLogin) {
                 const res = await authService.login({ email: formData.email, password: formData.password }); //sends the email and password to the backend.
                 
-                // Store the role, name, AND the VIP wristband
                 localStorage.setItem('userName', res.data.fullName);
                 localStorage.setItem('userRole', res.data.role);
-                localStorage.setItem('isAuthenticated', 'true'); 
-                
-                navigate('/dashboard');
+                localStorage.setItem('isAuthenticated', 'true');
+                localStorage.setItem('linkedDoctorId', res.data.linkedDoctorId ?? '');
+                localStorage.setItem('linkedPatientId', res.data.linkedPatientId ?? '');
+
+                navigate(res.data.role === 'User' ? '/home' : '/dashboard');
             } else {
-                await authService.register(formData); // First, we register the user with their full name, email, and password. If registration is successful, we immediately log them in.
+                await authService.register(formData);
                 const res = await authService.login({ email: formData.email, password: formData.password });
-                
+
                 localStorage.setItem('userName', res.data.fullName);
                 localStorage.setItem('userRole', res.data.role);
-                localStorage.setItem('isAuthenticated', 'true'); 
-                
-                navigate('/dashboard');
+                localStorage.setItem('isAuthenticated', 'true');
+                localStorage.setItem('linkedDoctorId', res.data.linkedDoctorId ?? '');
+                localStorage.setItem('linkedPatientId', res.data.linkedPatientId ?? '');
+
+                navigate(res.data.role === 'User' ? '/home' : '/dashboard');
             }
         } catch (err) {
             const cleanMessage = getErrorMessage(err, "Registration failed. Please check your details and try again.");

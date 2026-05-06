@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import doctorService from '../services/doctorService';
 import { Link } from 'react-router-dom'; // React Router's tool for navigating between pages without refreshing the browser.
-import { Plus, Trash2, UserCircle, Edit } from 'lucide-react';
+import { Plus, Trash2, UserCircle, Edit, CalendarDays } from 'lucide-react';
 
 export default function DoctorList() {
     const [doctors, setDoctors] = useState([]);
@@ -102,15 +102,23 @@ export default function DoctorList() {
                                     {/* 3. HIDE THE EDIT AND DELETE BUTTONS */}
                                     {isAdmin && (
                                         <td className="px-6 py-4 text-right">
+                                            <Link to={`/doctors/${doctor.id}/schedule`}>
+                                                <button
+                                                    className="text-gray-400 hover:text-brand-primary hover:bg-brand-primary/10 p-2 rounded-lg transition-colors mr-2"
+                                                    title="View Schedule"
+                                                >
+                                                    <CalendarDays size={20} />
+                                                </button>
+                                            </Link>
                                             <Link to={`/doctors/edit/${doctor.id}`}>
-                                                <button 
+                                                <button
                                                     className="text-gray-400 hover:text-blue-500 hover:bg-blue-50 p-2 rounded-lg transition-colors mr-2"
                                                     title="Edit Doctor"
                                                 >
                                                     <Edit size={20} />
                                                 </button>
                                             </Link>
-                                            <button 
+                                            <button
                                                 onClick={() => handleDelete(doctor.id)}
                                                 className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors"
                                                 title="Delete Doctor"

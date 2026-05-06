@@ -1,14 +1,18 @@
 import { Navigate, Outlet } from 'react-router-dom';
 
+// Outer guard — blocks unauthenticated users entirely
 export default function ProtectedRoute() {
-    // Check the VIP wristband in local storage
     const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+    if (!isAuthenticated) return <Navigate to="/" replace />;
+    return <Outlet />;
+}
 
-    if (!isAuthenticated) {
-        // If they don't have it, kick them to login
-        return <Navigate to="/" replace />;
+// Inner guard — blocks wrong roles; assumes auth already passed
+export function RoleRoute({ allowedRoles }) {
+    const userRole = localStorage.getItem('userRole');
+    if (!allowedRoles.includes(userRole)) {
+        if (userRole === 'User') return <Navigate to="/home" replace />;
+        return <Navigate to="/dashboard" replace />;
     }
-
-    // If they have it, render the nested dashboard routes
-    return <Outlet />;  // is a special React Router placeholder. It essentially means: "Okay, render whatever child route they were actually trying to go to
+    return <Outlet />;
 }

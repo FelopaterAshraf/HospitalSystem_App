@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react';
 import appointmentService from '../services/appointmentService';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Plus, Trash2, Calendar, Edit, Clock } from 'lucide-react';
 
 export default function AppointmentList() {
     const [appointments, setAppointments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
-    
     const userRole = localStorage.getItem('userRole');
     const isAdmin = userRole === 'Admin';
+    const isPatient = userRole === 'User' && !!localStorage.getItem('linkedPatientId');
 
     useEffect(() => {
+        if (userRole === 'User') { navigate('/my-appointments', { replace: true }); return; }
         fetchAppointments();
     }, []);
 
@@ -50,15 +52,24 @@ export default function AppointmentList() {
                     <p className="text-gray-500">Manage patient bookings and schedules.</p>
                 </div>
                 
-                {/* 1. HIDE THE ADD BUTTON FROM NORMAL USERS */}
-                {isAdmin && (
-                    <Link to="/appointments/new">
-                        <button className="bg-brand-primary hover:bg-brand-dark text-white px-5 py-2.5 rounded-xl font-medium transition-colors flex items-center gap-2 shadow-sm">
-                            <Plus size={20} />
-                            New Appointment
-                        </button>
-                    </Link>
-                )}
+                <div className="flex gap-3">
+                    {isAdmin && (
+                        <Link to="/appointments/new">
+                            <button className="bg-brand-primary hover:bg-brand-dark text-white px-5 py-2.5 rounded-xl font-medium transition-colors flex items-center gap-2 shadow-sm">
+                                <Plus size={20} />
+                                New Appointment
+                            </button>
+                        </Link>
+                    )}
+                    {isPatient && (
+                        <Link to="/appointments/book">
+                            <button className="bg-brand-primary hover:bg-brand-dark text-white px-5 py-2.5 rounded-xl font-medium transition-colors flex items-center gap-2 shadow-sm">
+                                <Plus size={20} />
+                                Book Appointment
+                            </button>
+                        </Link>
+                    )}
+                </div>
             </div>
 
             {/* Data Table */}

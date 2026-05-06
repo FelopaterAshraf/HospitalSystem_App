@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using HospitalSystem.Models;
 
 namespace HospitalSystem.DTOs;
 
@@ -20,4 +21,6 @@ public class AppointmentUpdateDto
 
     [Required(ErrorMessage = "Patient ID is required.")]
     public int PatientId { get; set; }
+
+    public AppointmentStatus Status { get; set; }
 }

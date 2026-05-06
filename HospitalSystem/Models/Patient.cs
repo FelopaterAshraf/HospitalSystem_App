@@ -7,6 +7,8 @@ public class Patient
     public int Id { get; set; }
     public string? Name { get; set; }
     public string? Diagnosis { get; set; }
+    public string? UserId { get; set; }
+    public ApplicationUser? User { get; set; }
 
     //  1-to-1 Relationship
     public PatientProfile? Profile { get; set; }

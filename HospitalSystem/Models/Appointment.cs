@@ -7,6 +7,7 @@ public class Appointment
     public int Id { get; set; }
     public DateTime AppointmentDate { get; set; }
     public string? Reason { get; set; }
+    public AppointmentStatus Status { get; set; } = AppointmentStatus.Pending;
 
     // Foreign Key to Doctor
     public int DoctorId { get; set; }

@@ -1,51 +1,74 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; //enables client-side routing
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import DashboardLayout from './components/DashboardLayout';
-import Auth from './pages/Auth';
-import Dashboard from './pages/Dashboard';
-import DoctorList from './pages/DoctorList';
-import AddDoctor from './pages/AddDoctor';
-import EditDoctor from './pages/EditDoctor';
-import PatientList from './pages/PatientList';
-import AddPatient from './pages/AddPatient';
-import EditPatient from './pages/EditPatient';
-import AppointmentList from './pages/AppointmentList';
-import AddAppointment from './pages/AddAppointment';
-import EditAppointment from './pages/EditAppointment';
+import ProtectedRoute, { RoleRoute } from './components/ProtectedRoute';
 
+import Auth              from './pages/Auth';
+import Dashboard         from './pages/Dashboard';
+import DoctorList        from './pages/DoctorList';
+import AddDoctor         from './pages/AddDoctor';
+import EditDoctor        from './pages/EditDoctor';
+import DoctorSchedule    from './pages/DoctorSchedule';
+import PatientList       from './pages/PatientList';
+import AddPatient        from './pages/AddPatient';
+import EditPatient       from './pages/EditPatient';
+import AppointmentList   from './pages/AppointmentList';
+import AddAppointment    from './pages/AddAppointment';
+import EditAppointment   from './pages/EditAppointment';
+import BookAppointment   from './pages/BookAppointment';
+import PendingAppointments from './pages/PendingAppointments';
+import PatientHome       from './pages/PatientHome';
+import MyAppointments    from './pages/MyAppointments';
 
-import ProtectedRoute from './components/ProtectedRoute';
+const wrap = (Page) => <DashboardLayout><Page /></DashboardLayout>;
 
 function App() {
     return (
         <Router>
             <Routes>
-                {/* The Login page stays outside so unauthenticated users can see it */}
+                {/* Public */}
                 <Route path="/" element={<Auth />} />
-                
-                {/* --- THE BOUNCER: Everything inside this wrapper is protected --- */}
-                <Route element={<ProtectedRoute />}>
-                    
-                    {/* Dashboard Hub */}
-                    <Route path="/dashboard" element={<DashboardLayout><Dashboard /></DashboardLayout>} />
-                    
-                    {/* Doctor Routes */}
-                    <Route path="/doctors" element={<DashboardLayout><DoctorList /></DashboardLayout>} />
-                    <Route path="/doctors/new" element={<DashboardLayout><AddDoctor /></DashboardLayout>} />
-                    <Route path="/doctors/edit/:id" element={<DashboardLayout><EditDoctor /></DashboardLayout>} />
-                    
-                    {/* Patient Routes */}
-                    <Route path="/patients" element={<DashboardLayout><PatientList /></DashboardLayout>} />
-                    <Route path="/patients/new" element={<DashboardLayout><AddPatient /></DashboardLayout>} />
-                    <Route path="/patients/edit/:id" element={<DashboardLayout><EditPatient /></DashboardLayout>} />
 
-                    {/* Appointment Routes */}
-                    <Route path="/appointments" element={<DashboardLayout><AppointmentList /></DashboardLayout>} />
-                    <Route path="/appointments/new" element={<DashboardLayout><AddAppointment /></DashboardLayout>} />
-                    <Route path="/appointments/edit/:id" element={<DashboardLayout><EditAppointment /></DashboardLayout>} />
-                    
+                {/* ── All authenticated users ── */}
+                <Route element={<ProtectedRoute />}>
+
+                    {/* Visible to all roles */}
+                    <Route path="/doctors" element={wrap(DoctorList)} />
+
+                    {/* ── Admin + Doctor ── */}
+                    <Route element={<RoleRoute allowedRoles={['Admin', 'Doctor']} />}>
+                        <Route path="/dashboard" element={wrap(Dashboard)} />
+                    </Route>
+
+                    {/* ── Admin only ── */}
+                    <Route element={<RoleRoute allowedRoles={['Admin']} />}>
+                        <Route path="/doctors/new"            element={wrap(AddDoctor)} />
+                        <Route path="/doctors/edit/:id"       element={wrap(EditDoctor)} />
+                        <Route path="/doctors/:id/schedule"   element={wrap(DoctorSchedule)} />
+
+                        <Route path="/patients"               element={wrap(PatientList)} />
+                        <Route path="/patients/new"           element={wrap(AddPatient)} />
+                        <Route path="/patients/edit/:id"      element={wrap(EditPatient)} />
+
+                        <Route path="/appointments"           element={wrap(AppointmentList)} />
+                        <Route path="/appointments/new"       element={wrap(AddAppointment)} />
+                        <Route path="/appointments/edit/:id"  element={wrap(EditAppointment)} />
+                    </Route>
+
+                    {/* ── User / Patient only ── */}
+                    <Route element={<RoleRoute allowedRoles={['User']} />}>
+                        <Route path="/home"                   element={wrap(PatientHome)} />
+                        <Route path="/my-appointments"        element={wrap(MyAppointments)} />
+                        <Route path="/appointments/book"      element={wrap(BookAppointment)} />
+                    </Route>
+
+                    {/* ── Doctor only ── */}
+                    <Route element={<RoleRoute allowedRoles={['Doctor']} />}>
+                        <Route path="/appointments/pending"   element={wrap(PendingAppointments)} />
+                    </Route>
+
                 </Route>
-                {/* --- END OF PROTECTED ROUTES --- */}
-                
+                {/* ── END PROTECTED ── */}
+
             </Routes>
         </Router>
     );

@@ -1,14 +1,14 @@
-import { 
-    Activity, LayoutDashboard, Users, Calendar, 
-    UserCircle, BarChart2, HelpCircle, 
-    Settings, Flag, LogOut 
+import {
+    Activity, LayoutDashboard, Users, Calendar,
+    UserCircle, LogOut, Home, CalendarPlus, ClipboardList, Clock
 } from 'lucide-react';
-import { Link, useLocation, useNavigate } from 'react-router-dom'; 
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
 
 export default function Sidebar() {
-    const location = useLocation();  // This hook gives us access to the current URL path, which we can use to determine which link is active
-    const navigate = useNavigate();  //This is a programmatic steering wheel. Instead of waiting for a user to click a link, it allows your code to force the browser to change pages whenever you tell it to. we'll use it to kick the user back to the login screen after they log out.
+    const location = useLocation();
+    const navigate = useNavigate();
+    const userRole = localStorage.getItem('userRole');
     // The Logout Function
     const handleLogout = async () => {
         try {
@@ -20,8 +20,9 @@ export default function Sidebar() {
             // --- ADD THESE TWO LINES TO DESTROY THE VIP WRISTBAND ---
             localStorage.removeItem('isAuthenticated');
             localStorage.removeItem('userRole');
-            // --------------------------------------------------------
-            localStorage.removeItem('userName'); 
+            localStorage.removeItem('userName');
+            localStorage.removeItem('linkedDoctorId');
+            localStorage.removeItem('linkedPatientId');
             
             // Kick them back to the login screen
             navigate('/'); 
@@ -51,18 +52,49 @@ export default function Sidebar() {
             {/* Main Menu */}
             <p className="text-xs text-gray-400 font-semibold mb-4 tracking-wider pl-4">MENU</p>
             <nav className="flex flex-col gap-2 mb-10">
-                <Link to="/dashboard" className={getLinkStyle('/dashboard')}>
-                    <LayoutDashboard size={20} /> Dashboard
-                </Link>
-                <Link to="/doctors" className={getLinkStyle('/doctors')}>
-                    <UserCircle size={20} /> Doctors
-                </Link>
-                <Link to="/patients" className={getLinkStyle('/patients')}>
-                    <Users size={20} /> Patients
-                </Link>
-                <Link to="/appointments" className={getLinkStyle('/appointments')}>
-                    <Calendar size={20} /> Appointments
-                </Link>
+
+                {/* Admin navigation */}
+                {userRole === 'Admin' && (<>
+                    <Link to="/dashboard" className={getLinkStyle('/dashboard')}>
+                        <LayoutDashboard size={20} /> Dashboard
+                    </Link>
+                    <Link to="/doctors" className={getLinkStyle('/doctors')}>
+                        <UserCircle size={20} /> Doctors
+                    </Link>
+                    <Link to="/patients" className={getLinkStyle('/patients')}>
+                        <Users size={20} /> Patients
+                    </Link>
+                    <Link to="/appointments" className={getLinkStyle('/appointments')}>
+                        <Calendar size={20} /> Appointments
+                    </Link>
+                </>)}
+
+                {/* Patient/User navigation */}
+                {userRole === 'User' && (<>
+                    <Link to="/home" className={getLinkStyle('/home')}>
+                        <Home size={20} /> Home
+                    </Link>
+                    <Link to="/doctors" className={getLinkStyle('/doctors')}>
+                        <UserCircle size={20} /> Doctors
+                    </Link>
+                    <Link to="/appointments/book" className={getLinkStyle('/appointments/book')}>
+                        <CalendarPlus size={20} /> Book Appointment
+                    </Link>
+                    <Link to="/my-appointments" className={getLinkStyle('/my-appointments')}>
+                        <ClipboardList size={20} /> My Appointments
+                    </Link>
+                </>)}
+
+                {/* Doctor navigation (Step 4 will add Pending Appointments) */}
+                {userRole === 'Doctor' && (<>
+                    <Link to="/dashboard" className={getLinkStyle('/dashboard')}>
+                        <LayoutDashboard size={20} /> Dashboard
+                    </Link>
+                    <Link to="/appointments/pending" className={getLinkStyle('/appointments/pending')}>
+                        <Clock size={20} /> Pending Appointments
+                    </Link>
+                </>)}
+
             </nav>
 
             

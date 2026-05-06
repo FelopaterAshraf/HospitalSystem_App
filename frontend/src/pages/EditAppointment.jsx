@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import appointmentService from '../services/appointmentService';
 import doctorService from '../services/doctorService';
 import patientService from '../services/patientService';
@@ -6,89 +6,142 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { getErrorMessage } from '../services/errorHelper';
 import { ArrowLeft, Calendar, CheckCircle2, AlertCircle } from 'lucide-react';
 
+const SLOT_HOURS = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17];
+
+const STATUS_OPTIONS = [
+    { value: 0, label: 'Pending' },
+    { value: 1, label: 'Approved' },
+    { value: 2, label: 'Rejected' },
+    { value: 3, label: 'Cancelled' },
+];
+
+function formatHour(hour) {
+    if (hour === 12) return '12:00 PM';
+    return hour < 12 ? `${hour}:00 AM` : `${hour - 12}:00 PM`;
+}
+
+function slotStyle(slotStatus, selected) {
+    if (slotStatus === 'Pending')
+        return 'bg-yellow-100 text-yellow-600 border border-yellow-300 cursor-not-allowed opacity-70';
+    if (slotStatus === 'Approved')
+        return 'bg-red-100 text-red-500 border border-red-200 cursor-not-allowed opacity-70';
+    if (selected)
+        return 'bg-brand-primary text-white border border-brand-primary shadow';
+    return 'bg-white text-gray-700 border border-gray-200 hover:border-brand-primary hover:bg-brand-primary/5 cursor-pointer';
+}
+
+function toLocalDateString(dt) {
+    const y = dt.getFullYear();
+    const m = String(dt.getMonth() + 1).padStart(2, '0');
+    const d = String(dt.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+}
+
 export default function EditAppointment() {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    // Form State
-    const [patientId, setPatientId] = useState('');
-    const [doctorId, setDoctorId] = useState('');
-    const [appointmentDate, setAppointmentDate] = useState('');
-    const [reason, setReason] = useState('');
-    
-    // Dropdown Data State
-    const [patients, setPatients] = useState([]);
-    const [doctors, setDoctors] = useState([]);
-    
-    // UI State
-    const [status, setStatus] = useState({ type: '', message: '' }); 
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
+    const [patientId, setPatientId]           = useState('');
+    const [doctorId, setDoctorId]             = useState('');
+    const [date, setDate]                     = useState('');
+    const [slots, setSlots]                   = useState([]);
+    const [selectedHour, setSelectedHour]     = useState(null);
+    const [reason, setReason]                 = useState('');
+    const [apptStatus, setApptStatus]         = useState(1);
+    const [patients, setPatients]             = useState([]);
+    const [doctors, setDoctors]               = useState([]);
+    const [uiStatus, setUiStatus]             = useState({ type: '', message: '' });
+    const [isSubmitting, setIsSubmitting]     = useState(false);
+    const [isLoading, setIsLoading]           = useState(true);
+    const [loadingSlots, setLoadingSlots]     = useState(false);
 
+    // Holds the hour from the loaded appointment so the first slot fetch can restore it
+    const initialHourRef = useRef(null);
+
+    // ── Initial data load ──────────────────────────────────────────────────
     useEffect(() => {
-        const fetchAllData = async () => {
-            try {
-                // Fetch the specific appointment, AND all doctors, AND all patients simultaneously!
-                const [aptRes, docRes, patRes] = await Promise.all([
-                    appointmentService.getById(id),
-                    doctorService.getAll(),
-                    patientService.getAll()
-                ]);
+        Promise.all([
+            appointmentService.getById(id),
+            doctorService.getAll(),
+            patientService.getAll(),
+        ]).then(([aptRes, docRes, patRes]) => {
+            setDoctors(docRes.data);
+            setPatients(patRes.data);
 
-                // Populate the dropdown lists
-                setDoctors(docRes.data);
-                setPatients(patRes.data);
+            const apt = aptRes.data;
+            const dt  = new Date(apt.appointmentDate);
 
-                // Populate the specific appointment data
-                const apt = aptRes.data;
-                setPatientId(apt.patientId || apt.patient?.id || ''); // Handle depending on how your backend sends it
-                setDoctorId(apt.doctorId || apt.doctor?.id || '');
-                setReason(apt.reason || '');
-                
-                // Format the C# date string to work with the HTML datetime-local input
-                if (apt.appointmentDate) {
-                    const formattedDate = new Date(apt.appointmentDate).toISOString().slice(0, 16);
-                    setAppointmentDate(formattedDate);
-                }
+            // Store the original hour so the slot useEffect can restore it
+            initialHourRef.current = dt.getHours();
 
-                setIsLoading(false);
-            } catch (err) {
-                setStatus({ type: 'error', message: getErrorMessage(err, 'Failed to update appointment.') });
-                setIsSubmitting(false);
-            }
-        };
-        fetchAllData();
+            setPatientId(String(apt.patientId));
+            setDoctorId(String(apt.doctorId));
+            setDate(toLocalDateString(dt));
+            setReason(apt.reason || '');
+            setApptStatus(apt.status ?? 1);
+            setIsLoading(false);
+        }).catch(() => {
+            setUiStatus({ type: 'error', message: 'Failed to load appointment data.' });
+            setIsLoading(false);
+        });
     }, [id]);
 
+    // ── Slot fetch — fires whenever doctor or date changes ─────────────────
+    useEffect(() => {
+        if (!doctorId || !date) { setSlots([]); setSelectedHour(null); return; }
+        setLoadingSlots(true);
+        appointmentService.getSlots(doctorId, date, parseInt(id))
+            .then(res => {
+                setSlots(res.data);
+                // First load: restore the original hour; subsequent changes: clear selection
+                if (initialHourRef.current !== null) {
+                    setSelectedHour(initialHourRef.current);
+                    initialHourRef.current = null;
+                } else {
+                    setSelectedHour(null);
+                }
+            })
+            .catch(() => { setSlots([]); setSelectedHour(null); })
+            .finally(() => setLoadingSlots(false));
+    }, [doctorId, date]);
+
+    // ── Submit ─────────────────────────────────────────────────────────────
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (selectedHour === null) {
+            setUiStatus({ type: 'error', message: 'Please select a time slot.' });
+            return;
+        }
         setIsSubmitting(true);
-        setStatus({ type: '', message: '' });
-
+        setUiStatus({ type: '', message: '' });
         try {
-            await appointmentService.update(id, { 
-                id: parseInt(id),
-                patientId: parseInt(patientId), 
-                doctorId: parseInt(doctorId), 
+            const appointmentDate = `${date}T${String(selectedHour).padStart(2, '0')}:00:00`;
+            await appointmentService.update(id, {
+                id:          parseInt(id),
+                patientId:   parseInt(patientId),
+                doctorId:    parseInt(doctorId),
                 appointmentDate,
-                reason 
+                reason,
+                status:      apptStatus,
             });
-            setStatus({ type: 'success', message: 'Appointment updated successfully!' });
+            setUiStatus({ type: 'success', message: 'Appointment updated successfully!' });
             setTimeout(() => navigate('/appointments'), 1500);
         } catch (err) {
-            setStatus({ type: 'error', message: 'Failed to update appointment. Check backend validation.' });
+            setUiStatus({ type: 'error', message: getErrorMessage(err, 'Failed to update appointment.') });
             setIsSubmitting(false);
         }
     };
 
-    if (isLoading) return <div className="p-8 text-center text-gray-500 animate-pulse">Loading schedule data...</div>;
+    if (isLoading) return <div className="p-8 text-center text-gray-500 animate-pulse">Loading appointment data...</div>;
+
+    const selectClass = "w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary bg-white";
+    const today = toLocalDateString(new Date());
 
     return (
         <div className="animate-fade-in max-w-2xl mx-auto mt-10">
             <div className="mb-6">
                 <Link to="/appointments" className="text-gray-500 hover:text-brand-primary flex items-center gap-2 w-fit transition-colors">
-                    <ArrowLeft size={20} />
-                    Back to Schedule
+                    <ArrowLeft size={20} /> Back to Schedule
                 </Link>
             </div>
 
@@ -99,36 +152,27 @@ export default function EditAppointment() {
                     </div>
                     <div>
                         <h2 className="text-2xl font-bold text-gray-800">Edit Appointment</h2>
-                        <p className="text-gray-500 text-sm">Reschedule or update details for ID: {id}</p>
+                        <p className="text-gray-500 text-sm">Reschedule or update details for appointment #{id}</p>
                     </div>
                 </div>
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-                    {/* Patient Dropdown */}
+
+                    {/* Patient */}
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">Select Patient</label>
-                        <select 
-                            value={patientId} 
-                            onChange={(e) => setPatientId(e.target.value)} 
-                            required 
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary bg-white transition-all"
-                        >
+                        <select value={patientId} onChange={e => setPatientId(e.target.value)} required className={selectClass}>
                             <option value="" disabled>-- Choose a Patient --</option>
                             {patients.map(p => (
-                                <option key={p.id} value={p.id}>{p.name} (ID: {p.id})</option>
+                                <option key={p.id} value={p.id}>{p.name}</option>
                             ))}
                         </select>
                     </div>
-                    
-                    {/* Doctor Dropdown */}
+
+                    {/* Doctor */}
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">Select Doctor</label>
-                        <select 
-                            value={doctorId} 
-                            onChange={(e) => setDoctorId(e.target.value)} 
-                            required 
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary bg-white transition-all"
-                        >
+                        <select value={doctorId} onChange={e => setDoctorId(e.target.value)} required className={selectClass}>
                             <option value="" disabled>-- Choose a Doctor --</option>
                             {doctors.map(d => (
                                 <option key={d.id} value={d.id}>Dr. {d.name} ({d.specialty})</option>
@@ -136,42 +180,87 @@ export default function EditAppointment() {
                         </select>
                     </div>
 
-                    {/* Date/Time Picker */}
+                    {/* Date */}
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Date & Time</label>
-                        <input 
-                            type="datetime-local" 
-                            value={appointmentDate} 
-                            onChange={(e) => setAppointmentDate(e.target.value)} 
-                            required 
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all"
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Select Date</label>
+                        <input
+                            type="date"
+                            value={date}
+                            min={today}
+                            onChange={e => setDate(e.target.value)}
+                            required
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary"
                         />
                     </div>
 
-                    {/* Reason Input */}
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Reason for Visit</label>
-                        <input 
-                            type="text" 
-                            value={reason} 
-                            onChange={(e) => setReason(e.target.value)} 
-                            required 
-                            maxLength="250"
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all"
-                        />
-                    </div>
-
-                    {status.message && (
-                        <div className={`p-4 rounded-xl flex items-center gap-3 ${status.type === 'success' ? 'bg-orange-50 text-orange-600' : 'bg-red-50 text-red-600'}`}>
-                            {status.type === 'success' ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
-                            <span className="font-medium">{status.message}</span>
+                    {/* Slot Grid */}
+                    {doctorId && date && (
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-3">
+                                Select Time Slot
+                                {loadingSlots && <span className="ml-2 text-gray-400 font-normal text-xs">Loading...</span>}
+                            </label>
+                            <div className="grid grid-cols-5 gap-2">
+                                {SLOT_HOURS.map(hour => {
+                                    const slot       = slots.find(s => s.hour === hour);
+                                    const slotStatus = slot ? slot.status : 'Available';
+                                    const isDisabled = slotStatus !== 'Available';
+                                    const isSelected = selectedHour === hour;
+                                    return (
+                                        <button
+                                            key={hour}
+                                            type="button"
+                                            disabled={isDisabled}
+                                            onClick={() => !isDisabled && setSelectedHour(hour)}
+                                            className={`py-2.5 rounded-xl text-sm font-medium transition-all ${slotStyle(slotStatus, isSelected)}`}
+                                            title={isDisabled ? slotStatus : 'Available'}
+                                        >
+                                            {formatHour(hour)}
+                                            {isDisabled && (
+                                                <div className="text-xs mt-0.5 opacity-80">{slotStatus}</div>
+                                            )}
+                                        </button>
+                                    );
+                                })}
+                            </div>
                         </div>
                     )}
 
-                    <button 
-                        type="submit" 
-                        disabled={isSubmitting}
-                        className={`mt-4 py-3.5 rounded-xl font-bold text-white transition-all shadow-sm ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-brand-primary hover:bg-brand-dark'}`}
+                    {/* Reason */}
+                    <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Reason for Visit</label>
+                        <input
+                            type="text"
+                            value={reason}
+                            onChange={e => setReason(e.target.value)}
+                            placeholder="e.g. Annual Checkup, Stomach Pain"
+                            required
+                            maxLength="250"
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary"
+                        />
+                    </div>
+
+                    {/* Status */}
+                    <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Status</label>
+                        <select value={apptStatus} onChange={e => setApptStatus(parseInt(e.target.value))} className={selectClass}>
+                            {STATUS_OPTIONS.map(o => (
+                                <option key={o.value} value={o.value}>{o.label}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {uiStatus.message && (
+                        <div className={`p-4 rounded-xl flex items-center gap-3 ${uiStatus.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'}`}>
+                            {uiStatus.type === 'success' ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
+                            <span className="font-medium">{uiStatus.message}</span>
+                        </div>
+                    )}
+
+                    <button
+                        type="submit"
+                        disabled={isSubmitting || selectedHour === null}
+                        className={`mt-2 py-3.5 rounded-xl font-bold text-white transition-all shadow-sm ${isSubmitting || selectedHour === null ? 'bg-gray-300 cursor-not-allowed' : 'bg-brand-primary hover:bg-brand-dark'}`}
                     >
                         {isSubmitting ? 'Saving Changes...' : 'Update Appointment'}
                     </button>

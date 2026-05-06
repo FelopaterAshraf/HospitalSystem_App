@@ -11,6 +11,21 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>  // DbCon
     {
     }
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Doctor>()
+            .HasOne(d => d.User).WithMany()
+            .HasForeignKey(d => d.UserId).OnDelete(DeleteBehavior.SetNull);
+        modelBuilder.Entity<Patient>()
+            .HasOne(p => p.User).WithMany()
+            .HasForeignKey(p => p.UserId).OnDelete(DeleteBehavior.SetNull);
+        // Prevent EF Core from skipping Status in INSERT when value is 0 (Pending)
+        modelBuilder.Entity<Appointment>()
+            .Property(a => a.Status)
+            .ValueGeneratedNever();
+    }
+
     // They tell SQL Server to create these specific tables.
     public DbSet<Doctor> Doctors { get; set; }
     public DbSet<Patient> Patients { get; set; }

@@ -6,6 +6,8 @@ public class Doctor
     public int Id { get; set; }
     public string? Name { get; set; }
     public string? Specialty { get; set; }
+    public string? UserId { get; set; }
+    public ApplicationUser? User { get; set; }
 
 
     // 1-to-Many Relationship

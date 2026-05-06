@@ -6,6 +6,8 @@ using System.Security.Claims;
 using System.Text;
 using HospitalSystem.Models;
 using HospitalSystem.DTOs;
+using HospitalSystem.Database;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 
 namespace HospitalSystem.Controllers;
@@ -15,15 +17,16 @@ namespace HospitalSystem.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly RoleManager<IdentityRole> _roleManager; // RoleManager
+    private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IConfiguration _configuration;
+    private readonly ApplicationDbContext _context;
 
-    // Added RoleManager to the constructor
-    public AuthController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+    public AuthController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, ApplicationDbContext context)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _configuration = configuration;
+        _context = context;
     }
 
     private static string GenerateRefreshToken()
@@ -65,6 +68,8 @@ public class AuthController : ControllerBase
             await _roleManager.CreateAsync(new IdentityRole("Admin"));
         if (!await _roleManager.RoleExistsAsync("User"))
             await _roleManager.CreateAsync(new IdentityRole("User"));
+        if (!await _roleManager.RoleExistsAsync("Doctor"))
+            await _roleManager.CreateAsync(new IdentityRole("Doctor"));
 
         // Make the first user an Admin, everyone else a User
         if (_userManager.Users.Count() == 1)
@@ -74,6 +79,11 @@ public class AuthController : ControllerBase
         else
         {
             await _userManager.AddToRoleAsync(user, "User");
+
+            // Auto-create a linked Patient record for every normal User
+            var patient = new Patient { Name = user.FullName, UserId = user.Id };
+            _context.Patients.Add(patient);
+            await _context.SaveChangesAsync();
         }
 
         return Ok(new { message = "User created successfully!" });
@@ -144,11 +154,16 @@ public class AuthController : ControllerBase
             });
 
             var primaryRole = userRoles.FirstOrDefault() ?? "User";
-            
-            return Ok(new { 
+
+            var linkedDoctor = await _context.Doctors.FirstOrDefaultAsync(d => d.UserId == user.Id);
+            var linkedPatient = await _context.Patients.FirstOrDefaultAsync(p => p.UserId == user.Id);
+
+            return Ok(new {
                 message = "Logged in successfully! Cookie generated.",
                 fullName = user.FullName,
-                role = primaryRole
+                role = primaryRole,
+                linkedDoctorId = linkedDoctor != null ? (int?)linkedDoctor.Id : null,
+                linkedPatientId = linkedPatient != null ? (int?)linkedPatient.Id : null
             });
         }
         

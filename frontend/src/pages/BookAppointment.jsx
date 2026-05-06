@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import appointmentService from '../services/appointmentService';
-import doctorService from '../services/doctorService';
-import patientService from '../services/patientService';
 import { useNavigate, Link } from 'react-router-dom';
+import doctorService from '../services/doctorService';
+import appointmentService from '../services/appointmentService';
 import { getErrorMessage } from '../services/errorHelper';
 import { ArrowLeft, CalendarPlus, CheckCircle2, AlertCircle } from 'lucide-react';
 
@@ -23,29 +22,24 @@ function slotStyle(status, selected) {
     return 'bg-white text-gray-700 border border-gray-200 hover:border-brand-primary hover:bg-brand-primary/5 cursor-pointer';
 }
 
-export default function AddAppointment() {
-    const [patientId, setPatientId]     = useState('');
-    const [doctorId, setDoctorId]       = useState('');
-    const [date, setDate]               = useState('');
-    const [slots, setSlots]             = useState([]);
+export default function BookAppointment() {
+    const linkedPatientId = localStorage.getItem('linkedPatientId');
+    const navigate = useNavigate();
+
+    const [doctors, setDoctors] = useState([]);
+    const [doctorId, setDoctorId] = useState('');
+    const [date, setDate] = useState('');
+    const [slots, setSlots] = useState([]);
     const [selectedHour, setSelectedHour] = useState(null);
-    const [reason, setReason]           = useState('');
-    const [patients, setPatients]       = useState([]);
-    const [doctors, setDoctors]         = useState([]);
-    const [status, setStatus]           = useState({ type: '', message: '' });
+    const [reason, setReason] = useState('');
+    const [status, setStatus] = useState({ type: '', message: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [loadingSlots, setLoadingSlots] = useState(false);
-    const navigate = useNavigate();
 
     const today = new Date().toISOString().split('T')[0];
 
     useEffect(() => {
-        Promise.all([doctorService.getAll(), patientService.getAll()])
-            .then(([docRes, patRes]) => {
-                setDoctors(docRes.data);
-                setPatients(patRes.data);
-            })
-            .catch(() => setStatus({ type: 'error', message: 'Failed to load doctors/patients.' }));
+        doctorService.getAll().then(res => setDoctors(res.data)).catch(() => {});
     }, []);
 
     useEffect(() => {
@@ -58,6 +52,18 @@ export default function AddAppointment() {
             .finally(() => setLoadingSlots(false));
     }, [doctorId, date]);
 
+    if (!linkedPatientId) {
+        return (
+            <div className="max-w-2xl mx-auto mt-10">
+                <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-8 text-center">
+                    <AlertCircle size={36} className="text-yellow-500 mx-auto mb-3" />
+                    <h2 className="text-lg font-bold text-yellow-800 mb-1">Account Not Linked</h2>
+                    <p className="text-yellow-700 text-sm">Your account is not linked to a patient record. Please contact the administrator.</p>
+                </div>
+            </div>
+        );
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (selectedHour === null) {
@@ -67,28 +73,25 @@ export default function AddAppointment() {
         setIsSubmitting(true);
         setStatus({ type: '', message: '' });
         try {
-            const appointmentDate = `${date}T${String(selectedHour).padStart(2, '0')}:00:00`;
-            await appointmentService.create({
-                patientId: parseInt(patientId),
-                doctorId:  parseInt(doctorId),
-                appointmentDate,
+            await appointmentService.book({
+                doctorId: parseInt(doctorId),
+                date,
+                hour: selectedHour,
                 reason
             });
-            setStatus({ type: 'success', message: 'Appointment booked successfully!' });
-            setTimeout(() => navigate('/appointments'), 1500);
+            setStatus({ type: 'success', message: 'Appointment request submitted! Status: Pending.' });
+            setTimeout(() => navigate('/my-appointments'), 1500);
         } catch (err) {
             setStatus({ type: 'error', message: getErrorMessage(err, 'Booking failed.') });
             setIsSubmitting(false);
         }
     };
 
-    const selectClass = "w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary bg-white";
-
     return (
         <div className="animate-fade-in max-w-2xl mx-auto mt-10">
             <div className="mb-6">
-                <Link to="/appointments" className="text-gray-500 hover:text-brand-primary flex items-center gap-2 w-fit transition-colors">
-                    <ArrowLeft size={20} /> Back to Schedule
+                <Link to="/my-appointments" className="text-gray-500 hover:text-brand-primary flex items-center gap-2 w-fit transition-colors">
+                    <ArrowLeft size={20} /> Back to My Appointments
                 </Link>
             </div>
 
@@ -99,27 +102,20 @@ export default function AddAppointment() {
                     </div>
                     <div>
                         <h2 className="text-2xl font-bold text-gray-800">Book Appointment</h2>
-                        <p className="text-gray-500 text-sm">Schedule a consultation between a doctor and patient.</p>
+                        <p className="text-gray-500 text-sm">Choose a doctor, date, and available time slot.</p>
                     </div>
                 </div>
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-
-                    {/* Patient */}
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Select Patient</label>
-                        <select value={patientId} onChange={e => setPatientId(e.target.value)} required className={selectClass}>
-                            <option value="" disabled>-- Choose a Patient --</option>
-                            {patients.map(p => (
-                                <option key={p.id} value={p.id}>{p.name}</option>
-                            ))}
-                        </select>
-                    </div>
-
                     {/* Doctor */}
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">Select Doctor</label>
-                        <select value={doctorId} onChange={e => setDoctorId(e.target.value)} required className={selectClass}>
+                        <select
+                            value={doctorId}
+                            onChange={e => setDoctorId(e.target.value)}
+                            required
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary bg-white"
+                        >
                             <option value="" disabled>-- Choose a Doctor --</option>
                             {doctors.map(d => (
                                 <option key={d.id} value={d.id}>Dr. {d.name} ({d.specialty})</option>
@@ -198,7 +194,7 @@ export default function AddAppointment() {
                         disabled={isSubmitting || selectedHour === null}
                         className={`mt-2 py-3.5 rounded-xl font-bold text-white transition-all shadow-sm ${isSubmitting || selectedHour === null ? 'bg-gray-300 cursor-not-allowed' : 'bg-brand-primary hover:bg-brand-dark'}`}
                     >
-                        {isSubmitting ? 'Processing...' : 'Confirm Appointment'}
+                        {isSubmitting ? 'Submitting...' : 'Request Appointment'}
                     </button>
                 </form>
             </div>
