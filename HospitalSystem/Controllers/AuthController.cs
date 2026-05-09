@@ -163,7 +163,8 @@ public class AuthController : ControllerBase
                 fullName = user.FullName,
                 role = primaryRole,
                 linkedDoctorId = linkedDoctor != null ? (int?)linkedDoctor.Id : null,
-                linkedPatientId = linkedPatient != null ? (int?)linkedPatient.Id : null
+                linkedPatientId = linkedPatient != null ? (int?)linkedPatient.Id : null,
+                specialty = linkedDoctor?.Specialty 
             });
         }
         
