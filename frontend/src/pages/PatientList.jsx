@@ -79,7 +79,7 @@ export default function PatientList() {
                         {patients.length === 0 ? (
                             <tr>
                                 {/* Adjust colSpan so it doesn't look weird when Actions column is hidden */}
-                                <td colSpan={isAdmin ? "3" : "2"} className="px-6 py-8 text-center text-gray-400">
+                                <td colSpan={isAdmin ? "3" : "2"} className="px-6 py-8 text-center text-gray-600">
                                     No patients found. Register one to get started!
                                 </td>
                             </tr>
@@ -105,7 +105,7 @@ export default function PatientList() {
                                         <td className="px-6 py-4 text-right">
                                             <Link to={`/patients/edit/${patient.id}`}>
                                                 <button 
-                                                    className="text-gray-400 hover:text-purple-500 hover:bg-purple-50 p-2 rounded-lg transition-colors mr-2"
+                                                    className="text-gray-500 hover:text-purple-500 hover:bg-purple-50 p-2 rounded-lg transition-colors mr-2"
                                                     title="Edit Patient"
                                                 >
                                                     <Edit size={20} />
@@ -113,7 +113,7 @@ export default function PatientList() {
                                             </Link>
                                             <button 
                                                 onClick={() => handleDelete(patient.id)}
-                                                className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors"
+                                                className="text-gray-500 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors"
                                                 title="Delete Patient"
                                             >
                                                 <Trash2 size={20} />

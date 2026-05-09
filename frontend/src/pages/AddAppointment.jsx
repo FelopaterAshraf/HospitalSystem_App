@@ -145,7 +145,7 @@ export default function AddAppointment() {
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 mb-3">
                                 Select Time Slot
-                                {loadingSlots && <span className="ml-2 text-gray-400 font-normal text-xs">Loading...</span>}
+                                {loadingSlots && <span className="ml-2 text-gray-500 font-normal text-xs">Loading...</span>}
                             </label>
                             <div className="grid grid-cols-5 gap-2">
                                 {SLOT_HOURS.map(hour => {

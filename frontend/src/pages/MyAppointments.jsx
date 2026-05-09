@@ -33,7 +33,7 @@ function AppointmentRow({ a, onCancel, cancelling, showCancel }) {
                     <button
                         onClick={() => onCancel(a.id)}
                         disabled={cancelling === a.id}
-                        className="flex items-center gap-1.5 text-sm text-red-500 hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                        className="flex items-center gap-1.5 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
                     >
                         <XCircle size={15} />
                         {cancelling === a.id ? 'Cancelling...' : 'Cancel'}

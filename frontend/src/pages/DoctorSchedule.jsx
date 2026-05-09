@@ -129,7 +129,7 @@ export default function DoctorSchedule() {
 
             {/* Timeline */}
             {loadingSchedule ? (
-                <div className="text-gray-400 text-sm animate-pulse py-4">Loading schedule...</div>
+                <div className="text-gray-600 text-sm animate-pulse py-4">Loading schedule...</div>
             ) : (
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-6 py-4">
                     {SCHEDULE_HOURS.map((hour, idx) => {
@@ -138,7 +138,7 @@ export default function DoctorSchedule() {
                             <div key={hour} className="flex gap-4 min-h-[64px]">
                                 {/* Time label */}
                                 <div className="w-14 flex-shrink-0 text-right pt-3">
-                                    <span className="text-xs font-semibold text-gray-400">{formatHourLabel(hour)}</span>
+                                    <span className="text-xs font-semibold text-gray-600">{formatHourLabel(hour)}</span>
                                 </div>
 
                                 {/* Slot area */}
@@ -160,7 +160,7 @@ export default function DoctorSchedule() {
                                         </div>
                                     ) : (
                                         <div className="flex items-center h-full">
-                                            <span className="text-xs text-gray-300 font-medium">Available</span>
+                                            <span className="text-xs text-gray-500 font-medium">Available</span>
                                         </div>
                                     )}
                                 </div>

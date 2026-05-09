@@ -86,7 +86,7 @@ export default function Sidebar() {
                             >
                                 Medcare
                             </span>
-                            <div className="text-white/30 text-[9px] mt-0.5 uppercase tracking-[0.14em] font-semibold">Hospital System</div>
+                            <div className="text-white/60 text-[11px] mt-0.5 uppercase tracking-[0.14em] font-semibold">Hospital System</div>
                         </div>
                     </div>
                 </div>
@@ -96,8 +96,8 @@ export default function Sidebar() {
                 {/* ── Nav ── */}
                 <nav aria-label="Main menu" className="px-3 flex flex-col gap-0.5">
                     <p
-                        className="text-[9.5px] font-bold uppercase tracking-[0.14em] px-3 mb-2"
-                        style={{ color: 'rgba(255,255,255,0.22)', fontFamily: 'Syne, sans-serif' }}
+                        className="text-[11px] font-bold uppercase tracking-[0.14em] px-3 mb-2"
+                        style={{ color: 'rgba(255,255,255,0.60)', fontFamily: 'Syne, sans-serif' }}
                     >
                         Menu
                     </p>
@@ -112,7 +112,7 @@ export default function Sidebar() {
                                 className="relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group overflow-hidden"
                                 style={{
                                     background: isActive ? 'rgba(15,201,138,0.14)' : 'transparent',
-                                    color:      isActive ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.42)',
+                                    color:      isActive ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.75)',
                                 }}
                             >
                                 {/* Active left indicator */}
@@ -179,9 +179,9 @@ export default function Sidebar() {
                         <button
                             onClick={handleLogout}
                             className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-[12px] font-semibold transition-all duration-150 group focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-teal"
-                            style={{ color: 'rgba(255,255,255,0.35)' }}
-                            onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}
-                            onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.35)'}
+                            style={{ color: 'rgba(255,255,255,0.65)' }}
+                            onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.90)'}
+                            onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.65)'}
                         >
                             <LogOut aria-hidden="true" size={13} />
                             Sign out

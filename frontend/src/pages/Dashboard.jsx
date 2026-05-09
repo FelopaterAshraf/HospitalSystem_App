@@ -23,10 +23,10 @@ const STAT_CARDS = [
         key: 'doctors',
         label: 'Total Doctors',
         Icon: UserCircle,
-        gradient: 'linear-gradient(135deg, #108970 0%, #0d7a62 100%)',
+        gradient: 'linear-gradient(135deg, #0d7a62 0%, #0d7a62 100%)',
         shadow:   'rgba(16,137,112,0.32)',
         link:     '/doctors',
-        linkText: 'View doctors',
+        linkText: 'View doctors' ,
     },
     {
         key: 'patients',
@@ -98,13 +98,13 @@ function AdminDashboard({ userName }) {
         <div className="animate-fade-in">
             {/* Header */}
             <div className="mb-8">
-                <p className="text-[11px] font-bold uppercase tracking-[0.12em] mb-1" style={{ color: '#108970', fontFamily: 'Syne, sans-serif' }}>
+                <p className="text-[11px] font-bold uppercase tracking-[0.12em] mb-1" style={{ color: '#0d7a62', fontFamily: 'Syne, sans-serif' }}>
                     Admin Panel
                 </p>
                 <h1 className="text-[28px] font-bold mb-1" style={{ color: '#0e3d36', ...H_STYLE }}>
                     Hello, {userName} 👋
                 </h1>
-                <p className="text-[13.5px]" style={{ color: '#7a9e95' }}>
+                <p className="text-[13.5px]" style={{ color: '#4a6e68' }}>
                     Here's your hospital at a glance.
                 </p>
             </div>
@@ -130,14 +130,14 @@ function AdminDashboard({ userName }) {
                             <p className="text-[42px] font-bold leading-none mb-1" style={{ color: '#0e3d36', fontFamily: 'Syne, sans-serif' }}>
                                 {loading ? '—' : stats[key]}
                             </p>
-                            <p className="text-[12px] font-semibold" style={{ color: '#7a9e95' }}>{label}</p>
+                            <p className="text-[12px] font-semibold" style={{ color: '#4a6e68' }}>{label}</p>
                         </div>
 
                         {/* Link top-right */}
                         <Link
                             to={link}
                             className="absolute top-4 right-4 flex items-center gap-0.5 text-[11px] font-bold opacity-0 group-hover:opacity-60 transition-opacity"
-                            style={{ color: '#108970', fontFamily: 'Syne, sans-serif' }}
+                            style={{ color: '#4a6e68', fontFamily: 'Syne, sans-serif' }}
                         >
                             {linkText} <ArrowUpRight size={11} />
                         </Link>
@@ -154,7 +154,7 @@ function AdminDashboard({ userName }) {
                     <h3 className="text-[17px] font-bold" style={{ color: '#0e3d36', ...H_STYLE }}>
                         Quick Actions
                     </h3>
-                    <TrendingUp size={16} style={{ color: '#c5d9d4' }} />
+                    <TrendingUp size={16} style={{ color: '#4a6e68' }} />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -270,13 +270,13 @@ function DoctorDashboard({ userName }) {
 
             {/* Header */}
             <div>
-                <p className="text-[11px] font-bold uppercase tracking-[0.12em] mb-1" style={{ color: '#108970', fontFamily: 'Syne, sans-serif' }}>
+                <p className="text-[11px] font-bold uppercase tracking-[0.12em] mb-1" style={{ color: '#0d7a62', fontFamily: 'Syne, sans-serif' }}>
                     Doctor Panel
                 </p>
                 <h1 className="text-[28px] font-bold mb-1" style={{ color: '#0e3d36', ...H_STYLE }}>
                     Hello, Dr. {userName} 👋
                 </h1>
-                <p className="text-[13px]" style={{ color: '#7a9e95' }}>
+                <p className="text-[13px]" style={{ color: '#4a6e68' }}>
                     {new Date().toLocaleDateString([], { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                 </p>
             </div>
@@ -305,21 +305,21 @@ function DoctorDashboard({ userName }) {
                     <Link
                         to="/appointments/pending"
                         className="flex items-center gap-1 text-[12px] font-bold"
-                        style={{ color: '#108970', fontFamily: 'Syne, sans-serif' }}
+                        style={{ color: '#0d7a62', fontFamily: 'Syne, sans-serif' }}
                     >
                         View all <ArrowUpRight size={13} />
                     </Link>
                 </div>
 
                 {loadingP ? (
-                    <div className="text-[13px] animate-pulse" style={{ color: '#a8c4bc' }}>Loading…</div>
+                    <div className="text-[13px] animate-pulse" style={{ color: '#4a6e68' }}>Loading…</div>
                 ) : pending.length === 0 ? (
                     <div
                         className="rounded-2xl p-10 text-center"
                         style={{ background: 'white', border: '1px solid rgba(14,61,54,0.07)' }}
                     >
                         <CalendarCheck size={36} style={{ color: '#d4e9e0', margin: '0 auto 12px' }} />
-                        <p className="font-semibold text-[14px]" style={{ color: '#7a9e95' }}>All caught up! No pending requests.</p>
+                        <p className="font-semibold text-[14px]" style={{ color: '#4a6e68' }}>All caught up! No pending requests.</p>
                     </div>
                 ) : (
                     <div className="rounded-2xl overflow-hidden" style={{ background: 'white', border: '1px solid rgba(14,61,54,0.07)', boxShadow: '0 2px 12px rgba(14,61,54,0.05)' }}>
@@ -327,7 +327,7 @@ function DoctorDashboard({ userName }) {
                             <thead>
                                 <tr style={{ background: 'rgba(238,244,241,0.7)', borderBottom: '1px solid rgba(14,61,54,0.07)' }}>
                                     {['Patient', 'Date & Time', 'Reason', 'Actions'].map(h => (
-                                        <th key={h} className="px-6 py-3.5 text-[11px] font-bold uppercase tracking-[0.08em]" style={{ color: '#7a9e95', fontFamily: 'Syne, sans-serif' }}>
+                                        <th key={h} className="px-6 py-3.5 text-[11px] font-bold uppercase tracking-[0.08em]" style={{ color: '#4a6e68', fontFamily: 'Syne, sans-serif' }}>
                                             {h}
                                         </th>
                                     ))}
@@ -343,11 +343,11 @@ function DoctorDashboard({ userName }) {
                                         <td className="px-6 py-4 font-bold text-[13.5px]" style={{ color: '#1a2e2a' }}>{a.patientName}</td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-2 text-[13px]" style={{ color: '#4b7065' }}>
-                                                <Clock size={13} style={{ color: '#108970', flexShrink: 0 }} />
+                                                <Clock size={13} style={{ color: '#0d7a62', flexShrink: 0 }} />
                                                 {new Date(a.appointmentDate).toLocaleString()}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 text-[13px]" style={{ color: '#7a9e95' }}>{a.reason || '—'}</td>
+                                        <td className="px-6 py-4 text-[13px]" style={{ color: '#4a6e68' }}>{a.reason || '—'}</td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-2">
                                                 <button
@@ -394,7 +394,7 @@ function DoctorDashboard({ userName }) {
                     style={{ background: 'white', border: '1px solid rgba(14,61,54,0.07)', boxShadow: '0 2px 12px rgba(14,61,54,0.05)' }}
                 >
                     <div className="flex items-center gap-2 mb-4">
-                        <Calendar size={15} style={{ color: '#108970' }} />
+                        <Calendar size={15} style={{ color: '#0d7a62' }} />
                         <span className="font-semibold text-[13.5px]" style={{ color: '#0e3d36', fontFamily: 'Syne, sans-serif' }}>{selectedDateLabel}</span>
                     </div>
 
@@ -410,19 +410,19 @@ function DoctorDashboard({ userName }) {
                                     className="flex flex-col items-center px-4 py-3 rounded-2xl min-w-[58px] transition-all duration-150 font-medium"
                                     style={{
                                         background: isSelected
-                                            ? 'linear-gradient(135deg, #108970, #0d7a62)'
+                                            ? 'linear-gradient(135deg, #0d7a62, #0b5c47)'
                                             : 'rgba(238,244,241,0.8)',
-                                        color:      isSelected ? 'white' : '#4b7065',
+                                        color:      isSelected ? 'white' : '#3a574f',
                                         boxShadow:  isSelected ? '0 4px 12px rgba(16,137,112,0.3)' : 'none',
                                         transform:  isSelected ? 'scale(1.04)' : 'none',
                                     }}
                                 >
-                                    <span className="text-[10px] mb-1 opacity-70" style={{ fontFamily: 'Syne, sans-serif' }}>
+                                    <span className="text-[10px] mb-1" style={{ color: isSelected ? 'rgba(255,255,255,0.85)' : '#3a574f', fontFamily: 'Syne, sans-serif' }}>
                                         {day.toLocaleDateString([], { weekday: 'short' })}
                                     </span>
                                     <span className="text-[18px] font-bold leading-none">{day.getDate()}</span>
                                     {isToday && !isSelected && (
-                                        <div className="w-1.5 h-1.5 rounded-full mt-1.5" style={{ background: '#108970' }} />
+                                        <div className="w-1.5 h-1.5 rounded-full mt-1.5" style={{ background: '#0d7a62' }} />
                                     )}
                                 </button>
                             );
@@ -432,7 +432,7 @@ function DoctorDashboard({ userName }) {
 
                 {/* Timeline */}
                 {loadingS ? (
-                    <div className="text-[13px] animate-pulse" style={{ color: '#a8c4bc' }}>Loading schedule…</div>
+                    <div className="text-[13px] animate-pulse" style={{ color: '#4a6e68' }}>Loading schedule…</div>
                 ) : (
                     <div
                         className="rounded-2xl px-6 py-4"
@@ -441,7 +441,7 @@ function DoctorDashboard({ userName }) {
                         {schedule.length === 0 && (
                             <div className="text-center py-6 mb-2">
                                 <Calendar size={30} style={{ color: '#d4e9e0', margin: '0 auto 8px' }} />
-                                <p className="text-[13px]" style={{ color: '#a8c4bc' }}>No approved appointments on this day.</p>
+                                <p className="text-[13px]" style={{ color: '#4a6e68' }}>No approved appointments on this day.</p>
                             </div>
                         )}
 
@@ -450,7 +450,7 @@ function DoctorDashboard({ userName }) {
                             return (
                                 <div key={hour} className="flex gap-4 min-h-[60px]">
                                     <div className="w-12 flex-shrink-0 text-right pt-3">
-                                        <span className="text-[11px] font-bold" style={{ color: '#c5d9d4', fontFamily: 'Syne, sans-serif' }}>
+                                        <span className="text-[11px] font-bold" style={{ color: '#4a6e68', fontFamily: 'Syne, sans-serif' }}>
                                             {formatHourLabel(hour)}
                                         </span>
                                     </div>
@@ -463,10 +463,10 @@ function DoctorDashboard({ userName }) {
                                                 className="flex items-stretch rounded-xl overflow-hidden"
                                                 style={{ border: '1px solid rgba(16,137,112,0.15)', boxShadow: '0 2px 8px rgba(16,137,112,0.08)' }}
                                             >
-                                                <div className="w-1 flex-shrink-0" style={{ background: 'linear-gradient(180deg, #108970, #0fc98a)' }} />
+                                                <div className="w-1 flex-shrink-0" style={{ background: 'linear-gradient(180deg, #0d7a62, #0fc98a)' }} />
                                                 <div className="flex-1 px-4 py-2.5" style={{ background: 'rgba(238,244,241,0.6)' }}>
                                                     <p className="font-bold text-[13px]" style={{ color: '#0e3d36' }}>{appt.patientName}</p>
-                                                    <p className="text-[11.5px] mt-0.5" style={{ color: '#7a9e95' }}>
+                                                    <p className="text-[11.5px] mt-0.5" style={{ color: '#4a6e68' }}>
                                                         {formatTime(appt.appointmentDate)} &middot; {appt.reason || 'No reason provided'}
                                                     </p>
                                                 </div>

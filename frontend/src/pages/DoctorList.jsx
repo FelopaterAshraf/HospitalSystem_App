@@ -78,7 +78,7 @@ export default function DoctorList() {
                     <tbody className="divide-y divide-gray-100">
                         {doctors.length === 0 ? (
                             <tr>
-                                <td colSpan={isAdmin ? "3" : "2"} className="px-6 py-8 text-center text-gray-400">
+                                <td colSpan={isAdmin ? "3" : "2"} className="px-6 py-8 text-center text-gray-600">
                                     No doctors found. Add one to get started!
                                 </td>
                             </tr>
@@ -104,7 +104,7 @@ export default function DoctorList() {
                                         <td className="px-6 py-4 text-right">
                                             <Link to={`/doctors/${doctor.id}/schedule`}>
                                                 <button
-                                                    className="text-gray-400 hover:text-brand-primary hover:bg-brand-primary/10 p-2 rounded-lg transition-colors mr-2"
+                                                    className="text-gray-500 hover:text-brand-primary hover:bg-brand-primary/10 p-2 rounded-lg transition-colors mr-2"
                                                     title="View Schedule"
                                                 >
                                                     <CalendarDays size={20} />
@@ -112,7 +112,7 @@ export default function DoctorList() {
                                             </Link>
                                             <Link to={`/doctors/edit/${doctor.id}`}>
                                                 <button
-                                                    className="text-gray-400 hover:text-blue-500 hover:bg-blue-50 p-2 rounded-lg transition-colors mr-2"
+                                                    className="text-gray-500 hover:text-blue-500 hover:bg-blue-50 p-2 rounded-lg transition-colors mr-2"
                                                     title="Edit Doctor"
                                                 >
                                                     <Edit size={20} />
@@ -120,7 +120,7 @@ export default function DoctorList() {
                                             </Link>
                                             <button
                                                 onClick={() => handleDelete(doctor.id)}
-                                                className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors"
+                                                className="text-gray-500 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors"
                                                 title="Delete Doctor"
                                             >
                                                 <Trash2 size={20} />

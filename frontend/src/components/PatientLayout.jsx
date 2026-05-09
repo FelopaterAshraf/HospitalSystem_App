@@ -73,7 +73,7 @@ export default function PatientLayout({ children }) {
                                     style={{
                                         fontFamily:  'Syne, sans-serif',
                                         fontWeight:  600,
-                                        color:       isActive ? '#108970' : '#8ca39a',
+                                        color:       isActive ? '#108970' : '#4a6e68',
                                         background:  isActive ? 'rgba(16,137,112,0.1)' : 'transparent',
                                         borderBottom: isActive ? '2px solid #108970' : '2px solid transparent',
                                     }}
@@ -91,7 +91,7 @@ export default function PatientLayout({ children }) {
                         className="flex items-center gap-1.5 text-[12.5px] font-semibold px-3 py-2 rounded-xl transition-all duration-150 flex-shrink-0"
                         style={{
                             fontFamily: 'Syne, sans-serif',
-                            color:      '#adb8b3',
+                            color:      '#4a6e68',
                             border:     '1px solid rgba(14,61,54,0.1)',
                         }}
                         onMouseEnter={e => {
@@ -100,7 +100,7 @@ export default function PatientLayout({ children }) {
                             e.currentTarget.style.borderColor= 'rgba(239,68,68,0.2)';
                         }}
                         onMouseLeave={e => {
-                            e.currentTarget.style.color      = '#adb8b3';
+                            e.currentTarget.style.color      = '#4a6e68';
                             e.currentTarget.style.background = 'transparent';
                             e.currentTarget.style.borderColor= 'rgba(14,61,54,0.1)';
                         }}

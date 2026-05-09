@@ -90,7 +90,7 @@ export default function AppointmentList() {
                     <tbody className="divide-y divide-gray-100">
                         {appointments.length === 0 ? (
                             <tr>
-                                <td colSpan={isAdmin ? "4" : "3"} className="px-6 py-8 text-center text-gray-400">
+                                <td colSpan={isAdmin ? "4" : "3"} className="px-6 py-8 text-center text-gray-600">
                                     No appointments found. Create one to get started!
                                 </td>
                             </tr>
@@ -122,7 +122,7 @@ export default function AppointmentList() {
                                         <td className="px-6 py-4 text-right">
                                             <Link to={`/appointments/edit/${appointment.id}`}>
                                                 <button 
-                                                    className="text-gray-400 hover:text-blue-500 hover:bg-blue-50 p-2 rounded-lg transition-colors mr-2"
+                                                    className="text-gray-500 hover:text-blue-500 hover:bg-blue-50 p-2 rounded-lg transition-colors mr-2"
                                                     title="Edit Appointment"
                                                 >
                                                     <Edit size={20} />
@@ -130,7 +130,7 @@ export default function AppointmentList() {
                                             </Link>
                                             <button 
                                                 onClick={() => handleDelete(appointment.id)}
-                                                className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors"
+                                                className="text-gray-500 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors"
                                                 title="Delete Appointment"
                                             >
                                                 <Trash2 size={20} />
