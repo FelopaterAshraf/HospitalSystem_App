@@ -100,21 +100,36 @@ export default function Auth() {
             {/* ── Left brand panel ── */}
             <div
                 className="hidden lg:flex w-[42%] relative overflow-hidden flex-col"
-                style={{ background: 'linear-gradient(160deg, #0e3d36 0%, #061a16 100%)' }}
+                style={{
+                    backgroundImage:    "url('/auth-hero.png')",
+                    backgroundSize:     'cover',
+                    backgroundPosition: 'center',
+                }}
             >
+                {/* Dark green gradient overlay — keeps text legible over the photo */}
                 <div
                     className="absolute inset-0 pointer-events-none"
                     style={{
-                        backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.055) 1px, transparent 1px)',
-                        backgroundSize:  '24px 24px',
+                        background: 'linear-gradient(160deg, rgba(6,26,22,0.90) 0%, rgba(14,61,54,0.80) 55%, rgba(6,26,22,0.72) 100%)',
+                        zIndex: 1,
                     }}
                 />
+                {/* Subtle dot texture */}
+                <div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                        backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)',
+                        backgroundSize:  '24px 24px',
+                        zIndex: 2,
+                    }}
+                />
+                {/* Ambient glows */}
                 <div className="absolute -bottom-40 -left-40 w-[420px] h-[420px] rounded-full pointer-events-none"
-                    style={{ background: 'rgba(15,201,138,0.08)', filter: 'blur(60px)' }} />
+                    style={{ background: 'rgba(15,201,138,0.07)', filter: 'blur(60px)', zIndex: 2 }} />
                 <div className="absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none"
-                    style={{ background: 'rgba(16,137,112,0.1)', filter: 'blur(50px)' }} />
+                    style={{ background: 'rgba(16,137,112,0.08)', filter: 'blur(50px)', zIndex: 2 }} />
 
-                <div className="relative z-10 flex flex-col justify-between p-12 h-full">
+                <div className="relative flex flex-col justify-between p-12 h-full" style={{ zIndex: 10 }}>
                     <div className="flex items-center gap-3">
                         <div
                             className="w-10 h-10 rounded-xl flex items-center justify-center"

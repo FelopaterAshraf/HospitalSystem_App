@@ -87,3 +87,17 @@ h1, h2, h3, h4, h5 {
 .btn-primary:active {
   transform: translateY(0);
 }
+
+.auth-left {
+  position: relative;
+  background-image: linear-gradient(
+      90deg,
+      rgba(0, 45, 38, 0.92),
+      rgba(0, 65, 55, 0.72),
+      rgba(0, 65, 55, 0.25)
+    ),
+    url('/auth-hero.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
