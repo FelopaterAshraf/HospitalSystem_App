@@ -19,18 +19,21 @@ function Field({ name, type = 'text', placeholder, IconEl, required = true, minL
     return (
         <div>
             <label
-                className="block text-[10.5px] font-bold uppercase tracking-[0.1em] mb-1.5"
-                style={{ color: '#8ca39a', fontFamily: 'Syne, sans-serif' }}
+                htmlFor={name}
+                className="block text-[12px] font-bold uppercase tracking-[0.1em] mb-1.5"
+                style={{ color: '#4a6e68', fontFamily: 'Syne, sans-serif' }}
             >
                 {label}
             </label>
             <div className="relative">
                 <IconEl
+                    aria-hidden="true"
                     className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
                     size={15}
                     style={{ color: '#a8c4bc' }}
                 />
                 <input
+                    id={name}
                     name={name}
                     type={type}
                     placeholder={placeholder}
@@ -95,12 +98,13 @@ export default function Auth() {
     };
 
     return (
-        <div className="min-h-screen flex" style={{ fontFamily: 'Nunito Sans, sans-serif' }}>
+        <main className="min-h-screen flex" style={{ fontFamily: 'Nunito Sans, sans-serif' }}>
 
             {/* ── Left brand panel ── */}
             <div
                 className="hidden lg:flex w-[42%] relative overflow-hidden flex-col"
                 style={{
+                    backgroundColor:    '#0a1f1c',
                     backgroundImage:    "url('/auth-hero.png')",
                     backgroundSize:     'cover',
                     backgroundPosition: 'center',
@@ -139,13 +143,13 @@ export default function Auth() {
                                 boxShadow:  '0 4px 16px rgba(15,201,138,0.15)',
                             }}
                         >
-                            <Activity size={20} style={{ color: '#0fc98a' }} strokeWidth={2.5} />
+                            <Activity aria-hidden="true" size={20} style={{ color: '#0fc98a' }} strokeWidth={2.5} />
                         </div>
                         <div>
-                            <span className="text-white font-bold text-xl tracking-wide" style={{ fontFamily: 'Syne, sans-serif' }}>
+                            <span className="text-white font-bold text-xl tracking-wide" style={{ fontFamily: 'Syne, sans-serif', textShadow: '0 1px 8px rgba(0,0,0,0.65)' }}>
                                 Medcare
                             </span>
-                            <div className="text-white/25 text-[9px] uppercase tracking-[0.14em] font-semibold mt-0.5">
+                            <div className="text-white/60 text-[11px] uppercase tracking-[0.14em] font-semibold mt-0.5">
                                 Hospital System
                             </div>
                         </div>
@@ -153,14 +157,14 @@ export default function Auth() {
 
                     <div>
                         <p className="text-[12px] font-bold uppercase tracking-[0.12em] mb-4"
-                            style={{ color: '#0fc98a', fontFamily: 'Syne, sans-serif' }}>
+                            style={{ color: '#0fc98a', fontFamily: 'Syne, sans-serif', textShadow: '0 1px 6px rgba(0,0,0,0.6)' }}>
                             Healthcare Management
                         </p>
                         <h2 className="text-4xl font-bold text-white leading-[1.15] mb-5"
-                            style={{ fontFamily: 'Syne, sans-serif' }}>
+                            style={{ fontFamily: 'Syne, sans-serif', textShadow: '0 2px 12px rgba(0,0,0,0.6)' }}>
                             Your health,<br />in capable hands.
                         </h2>
-                        <p className="text-white/45 text-[14px] leading-relaxed max-w-xs">
+                        <p className="text-white/70 text-[14px] leading-relaxed max-w-xs">
                             A unified platform for appointments, patient records, and medical staff — built for modern healthcare.
                         </p>
 
@@ -169,15 +173,15 @@ export default function Auth() {
                                 <div key={text} className="flex items-center gap-3">
                                     <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
                                         style={{ background: 'rgba(15,201,138,0.15)' }}>
-                                        <Icon size={14} style={{ color: '#0fc98a' }} strokeWidth={2} />
+                                        <Icon aria-hidden="true" size={14} style={{ color: '#0fc98a' }} strokeWidth={2} />
                                     </div>
-                                    <span className="text-white/50 text-[13px]">{text}</span>
+                                    <span className="text-white/70 text-[13px]">{text}</span>
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    <p className="text-white/20 text-[11px]">© 2026 Medcare Hospital System</p>
+                    <p className="text-white/60 text-xs">© 2026 Medcare Hospital System</p>
                 </div>
             </div>
 
@@ -189,7 +193,7 @@ export default function Auth() {
                     <div className="lg:hidden flex items-center gap-2 mb-8">
                         <div className="w-8 h-8 rounded-lg flex items-center justify-center"
                             style={{ background: 'linear-gradient(135deg, #108970, #0fc98a)' }}>
-                            <Activity size={16} className="text-white" />
+                            <Activity aria-hidden="true" size={16} className="text-white" />
                         </div>
                         <span className="font-bold text-lg" style={{ fontFamily: 'Syne, sans-serif', color: '#0e3d36' }}>
                             Medcare
@@ -199,7 +203,7 @@ export default function Auth() {
                     <h1 className="text-[26px] font-bold mb-1" style={{ fontFamily: 'Syne, sans-serif', color: '#0e3d36' }}>
                         {isLogin ? 'Welcome back' : 'Create account'}
                     </h1>
-                    <p className="text-[13.5px] mb-8" style={{ color: '#8ca39a' }}>
+                    <p className="text-[13.5px] mb-8" style={{ color: '#4a6e68' }}>
                         {isLogin ? 'Sign in to access your dashboard' : 'Register to start managing your health'}
                     </p>
 
@@ -233,10 +237,12 @@ export default function Auth() {
 
                         {error && (
                             <div
+                                role="alert"
+                                aria-live="assertive"
                                 className="flex items-center gap-2.5 p-3.5 rounded-xl text-[13px] font-medium"
                                 style={{ background: '#fef2f2', color: '#dc2626', border: '1px solid rgba(220,38,38,0.15)' }}
                             >
-                                <AlertCircle size={15} style={{ flexShrink: 0 }} />
+                                <AlertCircle aria-hidden="true" size={15} style={{ flexShrink: 0 }} />
                                 {error}
                             </div>
                         )}
@@ -244,6 +250,7 @@ export default function Auth() {
                         <button
                             type="submit"
                             disabled={loading}
+                            aria-busy={loading}
                             className="w-full py-3.5 rounded-xl font-bold text-white text-[14.5px] transition-all duration-200 flex items-center justify-center gap-2 group mt-1"
                             style={{
                                 fontFamily: 'Syne, sans-serif',
@@ -255,19 +262,19 @@ export default function Auth() {
                             onMouseLeave={e => { e.currentTarget.style.boxShadow = loading ? 'none' : '0 4px 20px rgba(16,137,112,0.36)'; e.currentTarget.style.transform = 'none'; }}
                         >
                             {loading ? 'Processing…' : (isLogin ? 'Sign In' : 'Create Account')}
-                            {!loading && <ChevronRight size={16} className="group-hover:translate-x-0.5 transition-transform" />}
+                            {!loading && <ChevronRight aria-hidden="true" size={16} className="group-hover:translate-x-0.5 transition-transform" />}
                         </button>
                     </form>
 
                     <div className="mt-7 text-center">
-                        <p className="text-[13px]" style={{ color: '#8ca39a' }}>
+                        <p className="text-[13px]" style={{ color: '#4a6e68' }}>
                             {isLogin ? "Don't have an account? " : 'Already have an account? '}
                             <button
                                 onClick={() => { setIsLogin(!isLogin); setError(''); }}
                                 className="font-bold transition-colors duration-150"
-                                style={{ color: '#108970' }}
-                                onMouseEnter={e => e.currentTarget.style.color = '#0d7a62'}
-                                onMouseLeave={e => e.currentTarget.style.color = '#108970'}
+                                style={{ color: '#0d7a62' }}
+                                onMouseEnter={e => e.currentTarget.style.color = '#0b5c47'}
+                                onMouseLeave={e => e.currentTarget.style.color = '#0d7a62'}
                             >
                                 {isLogin ? 'Register now' : 'Sign in here'}
                             </button>
@@ -276,6 +283,6 @@ export default function Auth() {
 
                 </div>
             </div>
-        </div>
+        </main>
     );
 }

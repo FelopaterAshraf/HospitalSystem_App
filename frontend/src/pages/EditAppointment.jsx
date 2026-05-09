@@ -141,13 +141,13 @@ export default function EditAppointment() {
         <div className="animate-fade-in max-w-2xl mx-auto mt-10">
             <div className="mb-6">
                 <Link to="/appointments" className="text-gray-500 hover:text-brand-primary flex items-center gap-2 w-fit transition-colors">
-                    <ArrowLeft size={20} /> Back to Schedule
+                    <ArrowLeft aria-hidden="true" size={20} /> Back to Schedule
                 </Link>
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
                 <div className="flex items-center gap-4 mb-8 border-b border-gray-100 pb-6">
-                    <div className="bg-orange-50 p-3 rounded-xl text-orange-500">
+                    <div className="bg-orange-50 p-3 rounded-xl text-orange-500" aria-hidden="true">
                         <Calendar size={28} />
                     </div>
                     <div>
@@ -160,8 +160,8 @@ export default function EditAppointment() {
 
                     {/* Patient */}
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Select Patient</label>
-                        <select value={patientId} onChange={e => setPatientId(e.target.value)} required className={selectClass}>
+                        <label htmlFor="ea-patient" className="block text-sm font-semibold text-gray-700 mb-2">Select Patient</label>
+                        <select id="ea-patient" value={patientId} onChange={e => setPatientId(e.target.value)} required className={selectClass}>
                             <option value="" disabled>-- Choose a Patient --</option>
                             {patients.map(p => (
                                 <option key={p.id} value={p.id}>{p.name}</option>
@@ -171,8 +171,8 @@ export default function EditAppointment() {
 
                     {/* Doctor */}
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Select Doctor</label>
-                        <select value={doctorId} onChange={e => setDoctorId(e.target.value)} required className={selectClass}>
+                        <label htmlFor="ea-doctor" className="block text-sm font-semibold text-gray-700 mb-2">Select Doctor</label>
+                        <select id="ea-doctor" value={doctorId} onChange={e => setDoctorId(e.target.value)} required className={selectClass}>
                             <option value="" disabled>-- Choose a Doctor --</option>
                             {doctors.map(d => (
                                 <option key={d.id} value={d.id}>Dr. {d.name} ({d.specialty})</option>
@@ -182,8 +182,9 @@ export default function EditAppointment() {
 
                     {/* Date */}
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Select Date</label>
+                        <label htmlFor="ea-date" className="block text-sm font-semibold text-gray-700 mb-2">Select Date</label>
                         <input
+                            id="ea-date"
                             type="date"
                             value={date}
                             min={today}
@@ -195,11 +196,13 @@ export default function EditAppointment() {
 
                     {/* Slot Grid */}
                     {doctorId && date && (
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-3">
+                        <fieldset>
+                            <legend className="block text-sm font-semibold text-gray-700 mb-3">
                                 Select Time Slot
-                                {loadingSlots && <span className="ml-2 text-gray-400 font-normal text-xs">Loading...</span>}
-                            </label>
+                                <span aria-live="polite" aria-atomic="true" className="ml-2 text-gray-400 font-normal text-xs">
+                                    {loadingSlots ? 'Loading...' : ''}
+                                </span>
+                            </legend>
                             <div className="grid grid-cols-5 gap-2">
                                 {SLOT_HOURS.map(hour => {
                                     const slot       = slots.find(s => s.hour === hour);
@@ -211,25 +214,27 @@ export default function EditAppointment() {
                                             key={hour}
                                             type="button"
                                             disabled={isDisabled}
+                                            aria-pressed={isSelected}
+                                            aria-label={`${formatHour(hour)} — ${slotStatus}`}
                                             onClick={() => !isDisabled && setSelectedHour(hour)}
                                             className={`py-2.5 rounded-xl text-sm font-medium transition-all ${slotStyle(slotStatus, isSelected)}`}
-                                            title={isDisabled ? slotStatus : 'Available'}
                                         >
                                             {formatHour(hour)}
                                             {isDisabled && (
-                                                <div className="text-xs mt-0.5 opacity-80">{slotStatus}</div>
+                                                <div aria-hidden="true" className="text-xs mt-0.5 opacity-80">{slotStatus}</div>
                                             )}
                                         </button>
                                     );
                                 })}
                             </div>
-                        </div>
+                        </fieldset>
                     )}
 
                     {/* Reason */}
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Reason for Visit</label>
+                        <label htmlFor="ea-reason" className="block text-sm font-semibold text-gray-700 mb-2">Reason for Visit</label>
                         <input
+                            id="ea-reason"
                             type="text"
                             value={reason}
                             onChange={e => setReason(e.target.value)}
@@ -242,8 +247,8 @@ export default function EditAppointment() {
 
                     {/* Status */}
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Status</label>
-                        <select value={apptStatus} onChange={e => setApptStatus(parseInt(e.target.value))} className={selectClass}>
+                        <label htmlFor="ea-status" className="block text-sm font-semibold text-gray-700 mb-2">Status</label>
+                        <select id="ea-status" value={apptStatus} onChange={e => setApptStatus(parseInt(e.target.value))} className={selectClass}>
                             {STATUS_OPTIONS.map(o => (
                                 <option key={o.value} value={o.value}>{o.label}</option>
                             ))}
@@ -251,8 +256,8 @@ export default function EditAppointment() {
                     </div>
 
                     {uiStatus.message && (
-                        <div className={`p-4 rounded-xl flex items-center gap-3 ${uiStatus.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'}`}>
-                            {uiStatus.type === 'success' ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
+                        <div role="alert" aria-live="assertive" className={`p-4 rounded-xl flex items-center gap-3 ${uiStatus.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'}`}>
+                            {uiStatus.type === 'success' ? <CheckCircle2 aria-hidden="true" size={20} /> : <AlertCircle aria-hidden="true" size={20} />}
                             <span className="font-medium">{uiStatus.message}</span>
                         </div>
                     )}
@@ -260,6 +265,7 @@ export default function EditAppointment() {
                     <button
                         type="submit"
                         disabled={isSubmitting || selectedHour === null}
+                        aria-busy={isSubmitting}
                         className={`mt-2 py-3.5 rounded-xl font-bold text-white transition-all shadow-sm ${isSubmitting || selectedHour === null ? 'bg-gray-300 cursor-not-allowed' : 'bg-brand-primary hover:bg-brand-dark'}`}
                     >
                         {isSubmitting ? 'Saving Changes...' : 'Update Appointment'}

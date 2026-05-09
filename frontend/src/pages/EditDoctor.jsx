@@ -52,14 +52,14 @@ export default function EditDoctor() {
         <div className="animate-fade-in max-w-2xl mx-auto mt-10">
             <div className="mb-6">
                 <Link to="/doctors" className="text-gray-500 hover:text-brand-primary flex items-center gap-2 w-fit transition-colors">
-                    <ArrowLeft size={20} />
+                    <ArrowLeft aria-hidden="true" size={20} />
                     Back to Directory
                 </Link>
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
                 <div className="flex items-center gap-4 mb-8 border-b border-gray-100 pb-6">
-                    <div className="bg-blue-50 p-3 rounded-xl text-blue-600">
+                    <div className="bg-blue-50 p-3 rounded-xl text-blue-600" aria-hidden="true">
                         <UserCog size={28} />
                     </div>
                     <div>
@@ -70,37 +70,40 @@ export default function EditDoctor() {
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-6">
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Doctor's Full Name</label>
-                        <input 
-                            type="text" 
-                            value={name} 
-                            onChange={(e) => setName(e.target.value)} 
-                            required 
+                        <label htmlFor="edit-doc-name" className="block text-sm font-semibold text-gray-700 mb-2">Doctor's Full Name</label>
+                        <input
+                            id="edit-doc-name"
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
                             className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all"
                         />
                     </div>
-                    
+
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Medical Specialty</label>
-                        <input 
-                            type="text" 
-                            value={specialty} 
-                            onChange={(e) => setSpecialty(e.target.value)} 
-                            required 
+                        <label htmlFor="edit-doc-specialty" className="block text-sm font-semibold text-gray-700 mb-2">Medical Specialty</label>
+                        <input
+                            id="edit-doc-specialty"
+                            type="text"
+                            value={specialty}
+                            onChange={(e) => setSpecialty(e.target.value)}
+                            required
                             className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all"
                         />
                     </div>
 
                     {status.message && (
-                        <div className={`p-4 rounded-xl flex items-center gap-3 ${status.type === 'success' ? 'bg-blue-50 text-blue-600' : 'bg-red-50 text-red-600'}`}>
-                            {status.type === 'success' ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
+                        <div role="alert" aria-live="assertive" className={`p-4 rounded-xl flex items-center gap-3 ${status.type === 'success' ? 'bg-blue-50 text-blue-600' : 'bg-red-50 text-red-600'}`}>
+                            {status.type === 'success' ? <CheckCircle2 aria-hidden="true" size={20} /> : <AlertCircle aria-hidden="true" size={20} />}
                             <span className="font-medium">{status.message}</span>
                         </div>
                     )}
 
-                    <button 
-                        type="submit" 
+                    <button
+                        type="submit"
                         disabled={isSubmitting}
+                        aria-busy={isSubmitting}
                         className={`mt-4 py-3.5 rounded-xl font-bold text-white transition-all shadow-sm ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-brand-primary hover:bg-brand-dark'}`}
                     >
                         {isSubmitting ? 'Saving Changes...' : 'Save Updates'}

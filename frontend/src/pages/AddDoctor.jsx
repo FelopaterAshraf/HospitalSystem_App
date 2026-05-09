@@ -51,14 +51,14 @@ export default function AddDoctor() {
         <div className="animate-fade-in max-w-2xl mx-auto mt-10">
             <div className="mb-6">
                 <Link to="/doctors" className="text-gray-500 hover:text-brand-primary flex items-center gap-2 w-fit transition-colors">
-                    <ArrowLeft size={20} />
+                    <ArrowLeft aria-hidden="true" size={20} />
                     Back to Directory
                 </Link>
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
                 <div className="flex items-center gap-4 mb-8 border-b border-gray-100 pb-6">
-                    <div className="bg-brand-light p-3 rounded-xl text-brand-primary">
+                    <div className="bg-brand-light p-3 rounded-xl text-brand-primary" aria-hidden="true">
                         <UserPlus size={28} />
                     </div>
                     <div>
@@ -69,8 +69,9 @@ export default function AddDoctor() {
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-6">
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Doctor's Full Name</label>
+                        <label htmlFor="doc-name" className="block text-sm font-semibold text-gray-700 mb-2">Doctor's Full Name</label>
                         <input
+                            id="doc-name"
                             name="name"
                             type="text"
                             value={form.name}
@@ -82,8 +83,9 @@ export default function AddDoctor() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Medical Specialty</label>
+                        <label htmlFor="doc-specialty" className="block text-sm font-semibold text-gray-700 mb-2">Medical Specialty</label>
                         <select
+                            id="doc-specialty"
                             value={selectedSpecialty}
                             onChange={e => { setSelectedSpecialty(e.target.value); setCustomSpecialty(''); }}
                             required
@@ -96,7 +98,9 @@ export default function AddDoctor() {
                         </select>
                         {selectedSpecialty === 'Other' && (
                             <input
+                                id="doc-custom-specialty"
                                 type="text"
+                                aria-label="Custom specialty"
                                 value={customSpecialty}
                                 onChange={e => setCustomSpecialty(e.target.value)}
                                 placeholder="Enter custom specialty"
@@ -107,8 +111,9 @@ export default function AddDoctor() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Login Email</label>
+                        <label htmlFor="doc-email" className="block text-sm font-semibold text-gray-700 mb-2">Login Email</label>
                         <input
+                            id="doc-email"
                             name="email"
                             type="email"
                             value={form.email}
@@ -120,8 +125,9 @@ export default function AddDoctor() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Temporary Password</label>
+                        <label htmlFor="doc-password" className="block text-sm font-semibold text-gray-700 mb-2">Temporary Password</label>
                         <input
+                            id="doc-password"
                             name="password"
                             type="password"
                             value={form.password}
@@ -134,8 +140,8 @@ export default function AddDoctor() {
                     </div>
 
                     {status.message && (
-                        <div className={`p-4 rounded-xl flex items-center gap-3 ${status.type === 'success' ? 'bg-brand-primary/10 text-brand-primary' : 'bg-red-50 text-red-600'}`}>
-                            {status.type === 'success' ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
+                        <div role="alert" aria-live="assertive" className={`p-4 rounded-xl flex items-center gap-3 ${status.type === 'success' ? 'bg-brand-primary/10 text-brand-primary' : 'bg-red-50 text-red-600'}`}>
+                            {status.type === 'success' ? <CheckCircle2 aria-hidden="true" size={20} /> : <AlertCircle aria-hidden="true" size={20} />}
                             <span className="font-medium">{status.message}</span>
                         </div>
                     )}
@@ -143,6 +149,7 @@ export default function AddDoctor() {
                     <button
                         type="submit"
                         disabled={isSubmitting}
+                        aria-busy={isSubmitting}
                         className={`mt-4 py-3.5 rounded-xl font-bold text-white transition-all shadow-sm ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-brand-primary hover:bg-brand-dark'}`}
                     >
                         {isSubmitting ? 'Creating Account...' : 'Create Doctor Account'}

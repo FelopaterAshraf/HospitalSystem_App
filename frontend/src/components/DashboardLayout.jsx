@@ -10,8 +10,9 @@ export default function DashboardLayout({ children }) {
 
     return (
         <div className="flex min-h-screen bg-brand-light font-sans">
+            <a href="#main-content" className="skip-link">Skip to main content</a>
             <Sidebar />
-            <main className="flex-1 ml-64 p-8">
+            <main id="main-content" tabIndex={-1} className="flex-1 ml-64 p-8">
                 {children}
             </main>
         </div>

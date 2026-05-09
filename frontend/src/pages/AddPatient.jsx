@@ -32,7 +32,7 @@ export default function AddPatient() {
             {/* Header / Back Button */}
             <div className="mb-6">
                 <Link to="/patients" className="text-gray-500 hover:text-brand-primary flex items-center gap-2 w-fit transition-colors">
-                    <ArrowLeft size={20} />
+                    <ArrowLeft aria-hidden="true" size={20} />
                     Back to Records
                 </Link>
             </div>
@@ -40,7 +40,7 @@ export default function AddPatient() {
             {/* Form Card */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
                 <div className="flex items-center gap-4 mb-8 border-b border-gray-100 pb-6">
-                    <div className="bg-purple-50 p-3 rounded-xl text-purple-600">
+                    <div className="bg-purple-50 p-3 rounded-xl text-purple-600" aria-hidden="true">
                         <UserPlus size={28} />
                     </div>
                     <div>
@@ -51,40 +51,43 @@ export default function AddPatient() {
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-6">
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Patient's Full Name</label>
-                        <input 
-                            type="text" 
-                            value={name} 
-                            onChange={(e) => setName(e.target.value)} 
+                        <label htmlFor="patient-name" className="block text-sm font-semibold text-gray-700 mb-2">Patient's Full Name</label>
+                        <input
+                            id="patient-name"
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
                             placeholder="e.g. John Doe"
-                            required 
+                            required
                             className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all"
                         />
                     </div>
-                    
+
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Initial Diagnosis</label>
-                        <input 
-                            type="text" 
-                            value={diagnosis} 
-                            onChange={(e) => setDiagnosis(e.target.value)} 
+                        <label htmlFor="patient-diagnosis" className="block text-sm font-semibold text-gray-700 mb-2">Initial Diagnosis</label>
+                        <input
+                            id="patient-diagnosis"
+                            type="text"
+                            value={diagnosis}
+                            onChange={(e) => setDiagnosis(e.target.value)}
                             placeholder="e.g. Hypertension, Viral Infection"
-                            required 
+                            required
                             className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all"
                         />
                     </div>
 
                     {/* Status Messages */}
                     {status.message && (
-                        <div className={`p-4 rounded-xl flex items-center gap-3 ${status.type === 'success' ? 'bg-purple-50 text-purple-600' : 'bg-red-50 text-red-600'}`}>
-                            {status.type === 'success' ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
+                        <div role="alert" aria-live="assertive" className={`p-4 rounded-xl flex items-center gap-3 ${status.type === 'success' ? 'bg-purple-50 text-purple-600' : 'bg-red-50 text-red-600'}`}>
+                            {status.type === 'success' ? <CheckCircle2 aria-hidden="true" size={20} /> : <AlertCircle aria-hidden="true" size={20} />}
                             <span className="font-medium">{status.message}</span>
                         </div>
                     )}
 
-                    <button 
-                        type="submit" 
+                    <button
+                        type="submit"
                         disabled={isSubmitting}
+                        aria-busy={isSubmitting}
                         className={`mt-4 py-3.5 rounded-xl font-bold text-white transition-all shadow-sm ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-brand-primary hover:bg-brand-dark'}`}
                     >
                         {isSubmitting ? 'Processing...' : 'Submit Patient Record'}

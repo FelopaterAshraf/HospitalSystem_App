@@ -50,6 +50,7 @@ export default function Sidebar() {
                     : 'Patient';
     return (
         <aside
+            aria-label="Site navigation"
             className="w-64 min-h-screen fixed left-0 top-0 flex flex-col overflow-hidden"
             style={{ background: 'linear-gradient(168deg, #0e3d36 0%, #071f1a 100%)' }}
         >
@@ -76,7 +77,7 @@ export default function Sidebar() {
                             className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
                             style={{ background: 'linear-gradient(135deg, #108970 0%, #0fc98a 100%)', boxShadow: '0 4px 12px rgba(15,201,138,0.35)' }}
                         >
-                            <Activity size={18} className="text-white" strokeWidth={2.5} />
+                            <Activity aria-hidden="true" size={18} className="text-white" strokeWidth={2.5} />
                         </div>
                         <div>
                             <span
@@ -93,7 +94,7 @@ export default function Sidebar() {
                 <div className="mx-5 border-t mb-5" style={{ borderColor: 'rgba(255,255,255,0.07)' }} />
 
                 {/* ── Nav ── */}
-                <nav className="px-3 flex flex-col gap-0.5">
+                <nav aria-label="Main menu" className="px-3 flex flex-col gap-0.5">
                     <p
                         className="text-[9.5px] font-bold uppercase tracking-[0.14em] px-3 mb-2"
                         style={{ color: 'rgba(255,255,255,0.22)', fontFamily: 'Syne, sans-serif' }}
@@ -107,6 +108,7 @@ export default function Sidebar() {
                             <Link
                                 key={to}
                                 to={to}
+                                aria-current={isActive ? 'page' : undefined}
                                 className="relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group overflow-hidden"
                                 style={{
                                     background: isActive ? 'rgba(15,201,138,0.14)' : 'transparent',
@@ -128,6 +130,7 @@ export default function Sidebar() {
                                 />
 
                                 <Icon
+                                    aria-hidden="true"
                                     size={16}
                                     strokeWidth={isActive ? 2.5 : 2}
                                     style={{ color: isActive ? '#0fc98a' : 'inherit', flexShrink: 0 }}
@@ -154,6 +157,7 @@ export default function Sidebar() {
                         <div className="flex items-center gap-2.5 mb-3">
                             {/* Avatar */}
                             <div
+                                aria-hidden="true"
                                 className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 text-white text-xs font-bold"
                                 style={{ background: 'linear-gradient(135deg, #108970, #0fc98a)' }}
                             >
@@ -174,12 +178,12 @@ export default function Sidebar() {
 
                         <button
                             onClick={handleLogout}
-                            className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-[12px] font-semibold transition-all duration-150 group"
+                            className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-[12px] font-semibold transition-all duration-150 group focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-teal"
                             style={{ color: 'rgba(255,255,255,0.35)' }}
                             onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}
                             onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.35)'}
                         >
-                            <LogOut size={13} />
+                            <LogOut aria-hidden="true" size={13} />
                             Sign out
                         </button>
                     </div>
