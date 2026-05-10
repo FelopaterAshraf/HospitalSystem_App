@@ -6,6 +6,7 @@ using HospitalSystem.Database;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace HospitalSystem.Controllers;
 
@@ -77,6 +78,67 @@ public class PatientController : ControllerBase
     {
         await _patientService.DeletePatientAsync(id);
         return Ok(new { message = "Patient deleted successfully!" });
+    }
+
+    // GET: api/patients/my-patients
+    [HttpGet("my-patients")]
+    [Authorize(Roles = "Doctor")]
+    public async Task<IActionResult> GetMyPatients()
+    {
+        var email = User.FindFirstValue(ClaimTypes.Name);
+        var user = await _userManager.FindByEmailAsync(email!);
+        if (user == null) return Unauthorized();
+
+        var doctor = await _context.Doctors.FirstOrDefaultAsync(d => d.UserId == user.Id);
+        if (doctor == null)
+            return BadRequest(new { error = "Your account is not linked to a doctor record." });
+
+        var appointments = await _context.Appointments
+            .Where(a => a.DoctorId == doctor.Id)
+            .Include(a => a.Patient)
+            .OrderByDescending(a => a.AppointmentDate)
+            .ToListAsync();
+
+        var patients = appointments
+            .GroupBy(a => a.PatientId)
+            .Select(g =>
+            {
+                var latest = g.First();
+                return new DoctorPatientDto
+                {
+                    Id = g.Key,
+                    Name = latest.Patient?.Name,
+                    Diagnosis = latest.Patient?.Diagnosis,
+                    LatestAppointmentDate = latest.AppointmentDate,
+                    LatestReason = latest.Reason,
+                    LatestStatus = latest.Status.ToString(),
+                    Appointments = g.Select(a => new DoctorPatientAppointmentDto
+                    {
+                        Id = a.Id,
+                        AppointmentDate = a.AppointmentDate,
+                        Reason = a.Reason,
+                        Status = a.Status.ToString()
+                    }).ToList()
+                };
+            })
+            .ToList();
+
+        return Ok(patients);
+    }
+
+    // PATCH: api/patients/5/diagnosis
+    [HttpPatch("{id}/diagnosis")]
+    [Authorize(Roles = "Doctor,Admin")]
+    public async Task<IActionResult> UpdateDiagnosis(int id, [FromBody] UpdateDiagnosisDto dto)
+    {
+        var patient = await _context.Patients.FindAsync(id);
+        if (patient == null)
+            return NotFound(new { error = $"Patient with ID {id} not found." });
+
+        patient.Diagnosis = dto.Diagnosis;
+        await _context.SaveChangesAsync();
+
+        return Ok(new { message = "Diagnosis updated." });
     }
 
     // PUT: api/patients/5/link-user

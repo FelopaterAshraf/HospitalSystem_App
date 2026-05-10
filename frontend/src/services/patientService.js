@@ -5,7 +5,9 @@ const patientService = {
     getById: (id) => api.get(`/patients/${id}`),
     create: (patientData) => api.post('/patients', patientData),
     update: (id, patientData) => api.put(`/patients/${id}`, patientData),
-    delete: (id) => api.delete(`/patients/${id}`)
+    delete: (id) => api.delete(`/patients/${id}`),
+    getMyPatients: () => api.get('/patients/my-patients'),
+    updateDiagnosis: (id, diagnosis) => api.patch(`/patients/${id}/diagnosis`, { diagnosis }),
 };
 
 export default patientService;

@@ -2,6 +2,7 @@ import {
     Activity, LayoutDashboard, Users, Calendar,
     UserCircle, LogOut, Home, CalendarPlus, ClipboardList, Clock,
 } from 'lucide-react';
+
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
 
@@ -15,6 +16,7 @@ const ADMIN_LINKS = [
 const DOCTOR_LINKS = [
     { to: '/dashboard',            label: 'Dashboard',           Icon: LayoutDashboard },
     { to: '/appointments/pending', label: 'Pending Requests',    Icon: Clock },
+    { to: '/my-patients',          label: 'My Patients',         Icon: Users },
 ];
 
 const USER_LINKS = [

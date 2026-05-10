@@ -16,6 +16,7 @@ import AddAppointment    from './pages/AddAppointment';
 import EditAppointment   from './pages/EditAppointment';
 import BookAppointment   from './pages/BookAppointment';
 import PendingAppointments from './pages/PendingAppointments';
+import DoctorPatients    from './pages/DoctorPatients';
 import PatientHome       from './pages/PatientHome';
 import MyAppointments    from './pages/MyAppointments';
 
@@ -64,6 +65,7 @@ function App() {
                     {/* ── Doctor only ── */}
                     <Route element={<RoleRoute allowedRoles={['Doctor']} />}>
                         <Route path="/appointments/pending"   element={wrap(PendingAppointments)} />
+                        <Route path="/my-patients"            element={wrap(DoctorPatients)} />
                     </Route>
 
                 </Route>
