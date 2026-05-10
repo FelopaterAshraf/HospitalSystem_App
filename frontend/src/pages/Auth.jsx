@@ -114,7 +114,7 @@ export default function Auth() {
                 <div
                     className="absolute inset-0 pointer-events-none"
                     style={{
-                        background: 'linear-gradient(160deg, rgba(6,26,22,0.90) 0%, rgba(14,61,54,0.80) 55%, rgba(6,26,22,0.72) 100%)',
+                        background: 'linear-gradient(160deg, rgba(6,26,22,0.95) 0%, rgba(10,42,36,0.92) 55%, rgba(6,26,22,0.92) 100%)',
                         zIndex: 1,
                     }}
                 />
@@ -149,7 +149,7 @@ export default function Auth() {
                             <span className="text-white font-bold text-xl tracking-wide" style={{ fontFamily: 'Syne, sans-serif', textShadow: '0 1px 8px rgba(0,0,0,0.65)' }}>
                                 Medcare
                             </span>
-                            <div className="text-white/60 text-[11px] uppercase tracking-[0.14em] font-semibold mt-0.5">
+                            <div className="text-[11px] uppercase tracking-[0.14em] font-semibold mt-0.5" style={{ color: '#c2ddd8' }}>
                                 Hospital System
                             </div>
                         </div>
@@ -157,14 +157,14 @@ export default function Auth() {
 
                     <div>
                         <p className="text-[12px] font-bold uppercase tracking-[0.12em] mb-4"
-                            style={{ color: '#0fc98a', fontFamily: 'Syne, sans-serif', textShadow: '0 1px 6px rgba(0,0,0,0.6)' }}>
+                            style={{ color: '#ffffff', fontFamily: 'Syne, sans-serif', textShadow: '0 1px 6px rgba(0,0,0,0.7)' }}>
                             Healthcare Management
                         </p>
                         <h2 className="text-4xl font-bold text-white leading-[1.15] mb-5"
                             style={{ fontFamily: 'Syne, sans-serif', textShadow: '0 2px 12px rgba(0,0,0,0.6)' }}>
                             Your health,<br />in capable hands.
                         </h2>
-                        <p className="text-white/70 text-[14px] leading-relaxed max-w-xs">
+                        <p className="text-[14px] leading-relaxed max-w-xs" style={{ color: '#cde4e0' }}>
                             A unified platform for appointments, patient records, and medical staff — built for modern healthcare.
                         </p>
 
@@ -175,13 +175,13 @@ export default function Auth() {
                                         style={{ background: 'rgba(15,201,138,0.15)' }}>
                                         <Icon aria-hidden="true" size={14} style={{ color: '#0fc98a' }} strokeWidth={2} />
                                     </div>
-                                    <span className="text-white/70 text-[13px]">{text}</span>
+                                    <span className="text-[13px]" style={{ color: '#cde4e0' }}>{text}</span>
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    <p className="text-white/60 text-xs">© 2026 Medcare Hospital System</p>
+                    <p className="text-xs" style={{ color: '#b0cdc8' }}>© 2026 Medcare Hospital System</p>
                 </div>
             </div>
 
