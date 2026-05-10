@@ -7,6 +7,33 @@ import { ArrowLeft, CalendarPlus, CheckCircle2, AlertCircle } from 'lucide-react
 
 const SLOT_HOURS = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17];
 
+const SPECIALTY_CHIPS = {
+    Dentistry:     ['Dental Pain', 'Toothache', 'Cavity Check', 'Gum Bleeding', 'Dental Cleaning', 'Tooth Extraction', 'Orthodontic Visit', 'Wisdom Tooth'],
+    Cardiology:    ['Chest Pain', 'Blood Pressure Check', 'Heart Palpitations', 'Shortness of Breath', 'Dizziness', 'Irregular Heartbeat', 'Post-cardiac Follow-up', 'Echocardiogram'],
+    Dermatology:   ['Skin Rash', 'Acne', 'Eczema', 'Mole Check', 'Hair Loss', 'Skin Allergy', 'Psoriasis', 'Wound Check'],
+    Neurology:     ['Headache', 'Migraine', 'Dizziness', 'Numbness', 'Memory Issues', 'Seizure Follow-up', 'Nerve Pain', 'Tremor'],
+    Orthopedics:   ['Back Pain', 'Joint Pain', 'Fracture Follow-up', 'Knee Pain', 'Shoulder Pain', 'Post-surgery Follow-up', 'Sports Injury', 'Arthritis'],
+    Pediatrics:    ['Vaccination', 'Growth Check', 'Fever', 'Cough', 'Ear Infection', 'Rash', 'General Checkup', 'Flu Symptoms'],
+    Endocrinology: ['Diabetes Check', 'Blood Sugar Test', 'Thyroid Check', 'Weight Issues', 'Hormonal Imbalance', 'Lab Test Review', 'Medication Review', 'Follow-up'],
+    Ophthalmology: ['Eye Exam', 'Vision Check', 'Eye Irritation', 'Blurry Vision', 'Eye Infection', 'Glasses Prescription', 'Dry Eyes', 'Follow-up'],
+    Psychiatry:    ['Anxiety', 'Depression', 'Sleep Issues', 'Stress', 'Medication Review', 'Follow-up', 'Panic Attacks', 'Mood Changes'],
+    default:       ['General Checkup', 'Follow-up', 'Consultation', 'Emergency', 'Prescription Renewal', 'Stomach Pain', 'Headache', 'Fever'],
+};
+
+function getChipsForSpecialty(specialty) {
+    if (!specialty) return SPECIALTY_CHIPS.default;
+    const s = specialty.toLowerCase();
+    if (s.includes('dent'))                          return SPECIALTY_CHIPS.Dentistry;
+    if (s.includes('cardio') || s.includes('heart')) return SPECIALTY_CHIPS.Cardiology;
+    if (s.includes('derm')   || s.includes('skin'))  return SPECIALTY_CHIPS.Dermatology;
+    if (s.includes('neuro'))                         return SPECIALTY_CHIPS.Neurology;
+    if (s.includes('ortho')  || s.includes('bone'))  return SPECIALTY_CHIPS.Orthopedics;
+    if (s.includes('pedia')  || s.includes('child')) return SPECIALTY_CHIPS.Pediatrics;
+    if (s.includes('endo')   || s.includes('diabet'))return SPECIALTY_CHIPS.Endocrinology;
+    if (s.includes('ophthal')|| s.includes('eye'))   return SPECIALTY_CHIPS.Ophthalmology;
+    if (s.includes('psych')  || s.includes('mental'))return SPECIALTY_CHIPS.Psychiatry;
+    return SPECIALTY_CHIPS.default;
+}
 function formatHour(hour) {
     if (hour === 12) return '12:00 PM';
     return hour < 12 ? `${hour}:00 AM` : `${hour - 12}:00 PM`;
@@ -86,6 +113,8 @@ export default function BookAppointment() {
             setIsSubmitting(false);
         }
     };
+
+    const activeChips = getChipsForSpecialty(doctors.find(d => String(d.id) === doctorId)?.specialty);
 
     return (
         <div className="animate-fade-in max-w-2xl mx-auto mt-10">
@@ -177,6 +206,22 @@ export default function BookAppointment() {
                     {/* Reason */}
                     <div>
                         <label htmlFor="apt-reason" className="block text-sm font-semibold text-gray-700 mb-2">Reason for Visit</label>
+                        <div className="flex flex-wrap gap-2 mb-2">
+                        {activeChips.map(chip => (
+                            <button
+                            key={chip}
+                            type="button"
+                            onClick={() => setReason(chip)}
+                            className={`px-3 py-1 rounded-full text-xs font-semibold border transition-all ${
+                                reason === chip
+                                ? 'bg-[#0b5f59] text-white border-[#0b5f59]'
+                                : 'bg-gray-100 text-gray-800 border-gray-400 hover:border-[#0b5f59] hover:text-[#0b5f59] hover:bg-emerald-50'
+                            }`}
+                            >
+                            {chip}
+                            </button>
+                        ))}
+                        </div>
                         <input
                             id="apt-reason"
                             type="text"
