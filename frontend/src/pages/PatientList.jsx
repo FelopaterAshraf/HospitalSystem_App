@@ -53,7 +53,7 @@ export default function PatientList() {
                 {/* 1. HIDE THE REGISTER BUTTON */}
                 {isAdmin && (
                     <Link to="/patients/new">
-                        <button className="bg-brand-primary hover:bg-brand-dark text-white px-5 py-2.5 rounded-xl font-medium transition-colors flex items-center gap-2 shadow-sm">
+                        <button className="bg-[#0b5f59] hover:bg-[#084c47] text-white px-5 py-2.5 rounded-xl font-semibold transition-colors inline-flex items-center gap-2 shadow-sm">
                             <Plus size={20} />
                             Register Patient
                         </button>
@@ -95,9 +95,15 @@ export default function PatientList() {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className="bg-purple-50 text-purple-600 px-3 py-1 rounded-full text-sm font-medium border border-purple-100">
-                                            {patient.diagnosis}
-                                        </span>
+                                        {patient.diagnosis ? (
+                                            <span className="bg-purple-50 text-purple-600 px-3 py-1 rounded-full text-sm font-medium border border-purple-100">
+                                                {patient.diagnosis}
+                                            </span>
+                                        ) : (
+                                            <span className="bg-gray-50 text-gray-400 px-3 py-1 rounded-full text-sm font-medium border border-gray-200 italic">
+                                                No diagnosis yet
+                                            </span>
+                                        )}
                                     </td>
                                     
                                     {/* 3. HIDE THE EDIT AND DELETE BUTTONS */}

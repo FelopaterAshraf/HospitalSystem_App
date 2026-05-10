@@ -136,8 +136,9 @@ function AdminDashboard({ userName }) {
                         {/* Link top-right */}
                         <Link
                             to={link}
+                            // fix link contrast
                             className="absolute top-4 right-4 flex items-center gap-0.5 text-[11px] font-bold opacity-0 group-hover:opacity-60 transition-opacity"
-                            style={{ color: '#4a6e68', fontFamily: 'Syne, sans-serif' }}
+                            style={{ color: '#042c82', fontFamily: 'Syne, sans-serif' }}
                         >
                             {linkText} <ArrowUpRight size={11} />
                         </Link>

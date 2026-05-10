@@ -55,7 +55,7 @@ export default function AppointmentList() {
                 <div className="flex gap-3">
                     {isAdmin && (
                         <Link to="/appointments/new">
-                            <button className="bg-brand-primary hover:bg-brand-dark text-white px-5 py-2.5 rounded-xl font-medium transition-colors flex items-center gap-2 shadow-sm">
+                            <button className="bg-[#0b5f59] hover:bg-[#084c47] text-white px-5 py-2.5 rounded-xl font-semibold transition-colors inline-flex items-center gap-2 shadow-sm">
                                 <Plus size={20} />
                                 New Appointment
                             </button>
