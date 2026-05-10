@@ -57,9 +57,11 @@ export default function PatientHome() {
 
                     {/* Left — headline + CTA + stats */}
                     <div className="flex-1 min-w-0">
-                        <p className="text-brand-primary font-semibold text-xs uppercase tracking-widest mb-3">Welcome back</p>
-                        <h1 className="text-4xl md:text-5xl font-extrabold text-white leading-tight mb-2">
-                            Hello, {userName}
+                        <p className="text-[#6fffd2] font-bold text-sm uppercase tracking-widest mb-3">
+                        Welcome back
+                        </p>
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight text-white">
+                        Hello, {userName}
                         </h1>
                         <p className="text-xl font-semibold text-white/70 mb-3">Your Health, Our Priority.</p>
                         <p className="text-gray-300 text-sm mb-8 max-w-md leading-relaxed">
@@ -67,20 +69,21 @@ export default function PatientHome() {
                             and manage your care — all in one place.
                         </p>
 
-                        <div className="flex flex-wrap gap-3 mb-10">
-                            <Link
-                                to="/appointments/book"
-                                className="bg-brand-primary hover:bg-green-600 text-white px-6 py-3 rounded-xl font-semibold flex items-center gap-2 transition-all shadow-lg shadow-brand-primary/30 hover:shadow-brand-primary/50 hover:-translate-y-0.5"
-                            >
-                                <CalendarPlus aria-hidden="true" size={18} /> Book Appointment
-                            </Link>
-                            <Link
-                                to="/my-appointments"
-                                className="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-6 py-3 rounded-xl font-semibold flex items-center gap-2 transition-all hover:-translate-y-0.5"
-                            >
-                                <ClipboardList aria-hidden="true" size={18} /> My Appointments
-                            </Link>
-                        </div>
+<div className="flex flex-wrap gap-3 mb-10">
+  <Link
+    to="/appointments/book"
+    className="bg-[#0f766e] hover:bg-[#0b5f59] text-white px-6 py-3 rounded-xl font-semibold flex items-center gap-2 transition-all shadow-lg hover:-translate-y-0.5"
+  >
+    <CalendarPlus aria-hidden="true" size={18} /> Book Appointment
+  </Link>
+
+  <Link
+    to="/my-appointments"
+    className="bg-white text-[#0d3d35] border border-white px-6 py-3 rounded-xl font-semibold flex items-center gap-2 transition-all hover:bg-gray-100 hover:-translate-y-0.5"
+  >
+    <ClipboardList aria-hidden="true" size={18} /> My Appointments
+  </Link>
+</div>
 
                         {/* Stats */}
                         <div className="flex flex-wrap gap-6">
@@ -176,7 +179,7 @@ export default function PatientHome() {
                         <h2 className="text-2xl font-bold text-gray-800">Upcoming Appointments</h2>
                         <p className="text-gray-500 text-sm mt-0.5">Your next scheduled visits</p>
                     </div>
-                    <Link to="/my-appointments" className="text-sm text-brand-primary hover:underline font-medium">
+                    <Link to="/my-appointments" className="text-sm text-[#0f766e] hover:underline font-semibold">
                         View all <span aria-hidden="true">→</span>
                     </Link>
                 </div>
@@ -193,10 +196,10 @@ export default function PatientHome() {
                         <p className="text-gray-600 font-semibold mb-1">No upcoming appointments</p>
                         <p className="text-gray-400 text-sm mb-6">Book an appointment with one of our specialists to get started.</p>
                         <Link
-                            to="/appointments/book"
-                            className="inline-block bg-brand-primary text-white px-6 py-2.5 rounded-xl font-medium hover:bg-brand-dark transition-colors shadow-sm"
+                        to="/appointments/book"
+                        className="inline-block bg-[#0f766e] text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-[#0b5f59] transition-colors shadow-sm"
                         >
-                            Book an Appointment
+                        Book an Appointment
                         </Link>
                     </div>
                 ) : (

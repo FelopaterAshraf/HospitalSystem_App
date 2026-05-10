@@ -129,10 +129,12 @@ export default function MyAppointments() {
                     <h1 className="text-3xl font-bold text-gray-800 mb-2">My Appointments</h1>
                     <p className="text-gray-500">Your upcoming and past appointment requests.</p>
                 </div>
-                <Link to="/appointments/book">
-                    <button className="bg-brand-primary hover:bg-brand-dark text-white px-5 py-2.5 rounded-xl font-medium transition-colors flex items-center gap-2 shadow-sm">
-                        <CalendarPlus size={20} /> Book New
-                    </button>
+                <Link
+                to="/appointments/book"
+                className="bg-[#0b5f59] hover:bg-[#084c47] text-white px-5 py-2.5 rounded-xl font-semibold transition-colors inline-flex items-center gap-2 shadow-sm"
+                >
+                <CalendarPlus aria-hidden="true" size={20} />
+                Book New
                 </Link>
             </div>
 
@@ -149,10 +151,11 @@ export default function MyAppointments() {
                     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-10 text-center">
                         <Calendar size={40} className="text-gray-300 mx-auto mb-3" />
                         <p className="text-gray-500 font-medium mb-4">No upcoming appointments.</p>
-                        <Link to="/appointments/book">
-                            <button className="bg-brand-primary text-white px-6 py-2.5 rounded-xl font-medium hover:bg-brand-dark transition-colors">
-                                Book an Appointment
-                            </button>
+                        <Link
+                        to="/appointments/book"
+                        className="inline-flex items-center justify-center bg-[#0b5f59] hover:bg-[#084c47] text-white px-6 py-2.5 rounded-xl font-semibold transition-colors"
+                        >
+                        Book an Appointment
                         </Link>
                     </div>
                 ) : (

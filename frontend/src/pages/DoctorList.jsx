@@ -102,28 +102,34 @@ export default function DoctorList() {
                                     {/* 3. HIDE THE EDIT AND DELETE BUTTONS */}
                                     {isAdmin && (
                                         <td className="px-6 py-4 text-right">
-                                            <Link to={`/doctors/${doctor.id}/schedule`}>
+                                            <Link
+                                                to={`/doctors/${doctor.id}/schedule`}
+                                                aria-label={`View schedule for Dr. ${doctor.name}`}
+                                            >
                                                 <button
                                                     className="text-gray-500 hover:text-brand-primary hover:bg-brand-primary/10 p-2 rounded-lg transition-colors mr-2"
-                                                    title="View Schedule"
+                                                    tabIndex={-1}
                                                 >
-                                                    <CalendarDays size={20} />
+                                                    <CalendarDays aria-hidden="true" size={20} />
                                                 </button>
                                             </Link>
-                                            <Link to={`/doctors/edit/${doctor.id}`}>
+                                            <Link
+                                                to={`/doctors/edit/${doctor.id}`}
+                                                aria-label={`Edit doctor ${doctor.name}`}
+                                            >
                                                 <button
                                                     className="text-gray-500 hover:text-blue-500 hover:bg-blue-50 p-2 rounded-lg transition-colors mr-2"
-                                                    title="Edit Doctor"
+                                                    tabIndex={-1}
                                                 >
-                                                    <Edit size={20} />
+                                                    <Edit aria-hidden="true" size={20} />
                                                 </button>
                                             </Link>
                                             <button
                                                 onClick={() => handleDelete(doctor.id)}
+                                                aria-label={`Delete doctor ${doctor.name}`}
                                                 className="text-gray-500 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors"
-                                                title="Delete Doctor"
                                             >
-                                                <Trash2 size={20} />
+                                                <Trash2 aria-hidden="true" size={20} />
                                             </button>
                                         </td>
                                     )}

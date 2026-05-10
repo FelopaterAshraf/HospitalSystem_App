@@ -103,20 +103,23 @@ export default function PatientList() {
                                     {/* 3. HIDE THE EDIT AND DELETE BUTTONS */}
                                     {isAdmin && (
                                         <td className="px-6 py-4 text-right">
-                                            <Link to={`/patients/edit/${patient.id}`}>
-                                                <button 
+                                            <Link
+                                                to={`/patients/edit/${patient.id}`}
+                                                aria-label={`Edit patient ${patient.name}`}
+                                            >
+                                                <button
                                                     className="text-gray-500 hover:text-purple-500 hover:bg-purple-50 p-2 rounded-lg transition-colors mr-2"
-                                                    title="Edit Patient"
+                                                    tabIndex={-1}
                                                 >
-                                                    <Edit size={20} />
+                                                    <Edit aria-hidden="true" size={20} />
                                                 </button>
                                             </Link>
-                                            <button 
+                                            <button
                                                 onClick={() => handleDelete(patient.id)}
+                                                aria-label={`Delete patient ${patient.name}`}
                                                 className="text-gray-500 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors"
-                                                title="Delete Patient"
                                             >
-                                                <Trash2 size={20} />
+                                                <Trash2 aria-hidden="true" size={20} />
                                             </button>
                                         </td>
                                     )}
