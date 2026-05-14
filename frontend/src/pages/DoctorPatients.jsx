@@ -71,11 +71,11 @@ export default function DoctorPatients() {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-gray-50/50 border-b border-gray-100 text-gray-500 text-sm tracking-wide">
-                                <th className="px-6 py-4 font-medium">Patient</th>
-                                <th className="px-6 py-4 font-medium">Last Appointment</th>
-                                <th className="px-6 py-4 font-medium">Last Reason</th>
+                                <th className="px-6 py-4 font-medium w-40">Patient</th>
+                                <th className="px-6 py-4 font-medium w-36">Last Appointment</th>
+                                <th className="px-6 py-4 font-medium w-44">Last Reason</th>
                                 <th className="px-6 py-4 font-medium">Diagnosis</th>
-                                <th className="px-6 py-4 font-medium text-right">Actions</th>
+                                <th className="px-6 py-4 font-medium text-right w-px whitespace-nowrap">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
@@ -92,8 +92,11 @@ export default function DoctorPatients() {
                                     </td>
                                     <td className="px-6 py-4">
                                         {p.diagnosis ? (
-                                            <span className="bg-purple-50 text-purple-600 px-3 py-1 rounded-full text-xs font-medium border border-purple-100">
-                                                {p.diagnosis}
+                                            <span
+                                                className="bg-purple-50 text-purple-600 px-3 py-1 rounded-full text-xs font-medium border border-purple-100"
+                                                title={p.diagnosis.length > 60 ? p.diagnosis : undefined}
+                                            >
+                                                {p.diagnosis.length > 60 ? p.diagnosis.slice(0, 60) + '…' : p.diagnosis}
                                             </span>
                                         ) : (
                                             <span className="bg-gray-50 text-gray-400 px-3 py-1 rounded-full text-xs font-medium border border-gray-200 italic">

@@ -7,7 +7,7 @@ import { getErrorMessage } from '../services/errorHelper';
 import {
     Users, UserCircle, Calendar, Clock,
     CheckCircle2, XCircle, CalendarCheck,
-    ArrowUpRight, TrendingUp,
+    ArrowUpRight, TrendingUp, ChevronLeft, ChevronRight,
 } from 'lucide-react';
 
 // ─────────────────────────────────────────────────────────────
@@ -196,8 +196,8 @@ const toISODate = d => {
     return `${y}-${m}-${day}`;
 };
 
-const buildWeekDays = () =>
-    Array.from({ length: 7 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() + i); return d; });
+const buildWeekDays = (offsetWeeks = 0) =>
+    Array.from({ length: 7 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() + offsetWeeks * 7 + i); return d; });
 
 const formatHourLabel = h => `${String(h).padStart(2, '0')}:00`;
 const formatTime      = ds => new Date(ds).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -207,11 +207,31 @@ const formatTime      = ds => new Date(ds).toLocaleTimeString([], { hour: '2-dig
 // ─────────────────────────────────────────────────────────────
 function DoctorDashboard({ userName }) {
     const todayISO = toISODate(new Date());
-    const weekDays = buildWeekDays();
 
+    const [weekOffset,    setWeekOffset]    = useState(0);
     const [pending,       setPending]       = useState([]);
     const [schedule,      setSchedule]      = useState([]);
     const [selectedDate,  setSelectedDate]  = useState(todayISO);
+
+    const weekDays = buildWeekDays(weekOffset);
+
+    const changeWeek = (delta) => {
+        const newOffset = weekOffset + delta;
+        setWeekOffset(newOffset);
+        const anchor = new Date();
+        anchor.setDate(anchor.getDate() + newOffset * 7);
+        setSelectedDate(toISODate(anchor));
+    };
+
+    const handleDatePick = (isoDate) => {
+        if (!isoDate) return;
+        setSelectedDate(isoDate);
+        const picked = new Date(isoDate + 'T00:00:00');
+        const today  = new Date();
+        today.setHours(0, 0, 0, 0);
+        const diffDays = Math.round((picked - today) / (1000 * 60 * 60 * 24));
+        setWeekOffset(Math.floor(diffDays / 7));
+    };
     const [loadingP,      setLoadingP]      = useState(true);
     const [loadingS,      setLoadingS]      = useState(false);
     const [feedback,      setFeedback]      = useState({ type: '', message: '' });
@@ -394,12 +414,76 @@ function DoctorDashboard({ userName }) {
                     className="rounded-2xl p-5 mb-4"
                     style={{ background: 'white', border: '1px solid rgba(14,61,54,0.07)', boxShadow: '0 2px 12px rgba(14,61,54,0.05)' }}
                 >
-                    <div className="flex items-center gap-2 mb-4">
-                        <Calendar size={15} style={{ color: '#0d7a62' }} />
-                        <span className="font-semibold text-[13.5px]" style={{ color: '#0e3d36', fontFamily: 'Syne, sans-serif' }}>{selectedDateLabel}</span>
+                    {/* Week navigation row */}
+                    <div className="flex flex-wrap items-center gap-2 mb-4">
+                        <button
+                            type="button"
+                            onClick={() => changeWeek(-1)}
+                            aria-label="Previous week"
+                            className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-colors"
+                            style={{ background: 'rgba(238,244,241,0.9)', color: '#3a574f', border: '1px solid rgba(14,61,54,0.1)' }}
+                            onMouseEnter={e => e.currentTarget.style.background = 'rgba(220,236,229,1)'}
+                            onMouseLeave={e => e.currentTarget.style.background = 'rgba(238,244,241,0.9)'}
+                        >
+                            <ChevronLeft size={14} aria-hidden="true" />
+                            Prev
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() => { setWeekOffset(0); setSelectedDate(todayISO); }}
+                            disabled={weekOffset === 0}
+                            aria-label="Go to current week"
+                            className="px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-colors disabled:opacity-40 disabled:cursor-default"
+                            style={{
+                                background: weekOffset === 0 ? 'rgba(13,122,98,0.12)' : 'rgba(238,244,241,0.9)',
+                                color:      weekOffset === 0 ? '#0d7a62'              : '#3a574f',
+                                border:     weekOffset === 0 ? '1px solid rgba(13,122,98,0.25)' : '1px solid rgba(14,61,54,0.1)',
+                            }}
+                        >
+                            Today
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() => changeWeek(1)}
+                            aria-label="Next week"
+                            className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-colors"
+                            style={{ background: 'rgba(238,244,241,0.9)', color: '#3a574f', border: '1px solid rgba(14,61,54,0.1)' }}
+                            onMouseEnter={e => e.currentTarget.style.background = 'rgba(220,236,229,1)'}
+                            onMouseLeave={e => e.currentTarget.style.background = 'rgba(238,244,241,0.9)'}
+                        >
+                            Next
+                            <ChevronRight size={14} aria-hidden="true" />
+                        </button>
+
+                        <input
+                            type="date"
+                            value={selectedDate}
+                            onChange={e => handleDatePick(e.target.value)}
+                            aria-label="Jump to date"
+                            className="ml-auto px-3 py-1.5 rounded-lg text-[12px] font-medium outline-none transition-all"
+                            style={{
+                                background: 'white',
+                                border:     '1.5px solid rgba(14,61,54,0.15)',
+                                color:      '#1a2e2a',
+                                fontFamily: 'Syne, sans-serif',
+                            }}
+                            onFocus={e => { e.target.style.borderColor = '#0d7a62'; e.target.style.boxShadow = '0 0 0 3px rgba(13,122,98,0.1)'; }}
+                            onBlur={e  => { e.target.style.borderColor = 'rgba(14,61,54,0.15)'; e.target.style.boxShadow = 'none'; }}
+                        />
                     </div>
 
-                    <div className="flex gap-2 overflow-x-auto pb-1">
+                    {/* Selected date label */}
+                    <div className="flex items-center gap-2 mb-4">
+                        <Calendar size={15} style={{ color: '#0d7a62' }} aria-hidden="true" />
+                        <span className="font-semibold text-[13.5px]" style={{ color: '#0e3d36', fontFamily: 'Syne, sans-serif' }}>
+                            {selectedDateLabel}
+                        </span>
+                    </div>
+
+                    {/* Day strip */}
+                    <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="Select a day">
                         {weekDays.map(day => {
                             const iso        = toISODate(day);
                             const isSelected = iso === selectedDate;
@@ -407,12 +491,13 @@ function DoctorDashboard({ userName }) {
                             return (
                                 <button
                                     key={iso}
+                                    type="button"
                                     onClick={() => setSelectedDate(iso)}
-                                    className="flex flex-col items-center px-4 py-3 rounded-2xl min-w-[58px] transition-all duration-150 font-medium"
+                                    aria-pressed={isSelected}
+                                    aria-label={day.toLocaleDateString([], { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                                    className="flex flex-col items-center px-4 py-3 rounded-2xl min-w-[58px] transition-all duration-150 font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0d7a62]"
                                     style={{
-                                        background: isSelected
-                                            ? 'linear-gradient(135deg, #0d7a62, #0b5c47)'
-                                            : 'rgba(238,244,241,0.8)',
+                                        background: isSelected ? 'linear-gradient(135deg, #0d7a62, #0b5c47)' : 'rgba(238,244,241,0.8)',
                                         color:      isSelected ? 'white' : '#3a574f',
                                         boxShadow:  isSelected ? '0 4px 12px rgba(16,137,112,0.3)' : 'none',
                                         transform:  isSelected ? 'scale(1.04)' : 'none',
