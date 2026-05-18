@@ -1,8 +1,10 @@
 import Sidebar from './Sidebar';
 import PatientLayout from './PatientLayout';
+import { useAuth } from '../context/AuthContext';
 
 export default function DashboardLayout({ children }) {
-    const userRole = localStorage.getItem('userRole');
+    const { user } = useAuth();
+    const userRole = user?.role;
 
     if (userRole === 'User') {
         return <PatientLayout>{children}</PatientLayout>;

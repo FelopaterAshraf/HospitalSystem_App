@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
 import { getErrorMessage } from '../services/errorHelper';
+import { useAuth } from '../context/AuthContext';
 import { Activity, Mail, Lock, UserPlus, ChevronRight, AlertCircle, ShieldCheck, Calendar, Users } from 'lucide-react';
 
 const FEATURES = [
@@ -62,8 +63,21 @@ export default function Auth() {
     const [loading,  setLoading]  = useState(false);
     const [error,    setError]    = useState('');
     const navigate = useNavigate();
+    const { setUser } = useAuth();
 
     const handleChange = e => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+
+    const applyLogin = (res) => {
+        setUser({
+            email:          formData.email,
+            fullName:       res.data.fullName,
+            role:           res.data.role,
+            linkedDoctorId:  res.data.linkedDoctorId  ?? null,
+            linkedPatientId: res.data.linkedPatientId ?? null,
+            specialty:      res.data.specialty        ?? null,
+        });
+        navigate(res.data.role === 'User' ? '/home' : '/dashboard');
+    };
 
     const handleSubmit = async e => {
         e.preventDefault();
@@ -72,23 +86,11 @@ export default function Auth() {
         try {
             if (isLogin) {
                 const res = await authService.login({ email: formData.email, password: formData.password });
-                localStorage.setItem('userName',        res.data.fullName);
-                localStorage.setItem('userRole',        res.data.role);
-                localStorage.setItem('isAuthenticated', 'true');
-                localStorage.setItem('linkedDoctorId',  res.data.linkedDoctorId  ?? '');
-                localStorage.setItem('linkedPatientId', res.data.linkedPatientId ?? '');
-                localStorage.setItem('userSpecialty', res.data.specialty ?? '');
-                navigate(res.data.role === 'User' ? '/home' : '/dashboard');
+                applyLogin(res);
             } else {
                 await authService.register(formData);
                 const res = await authService.login({ email: formData.email, password: formData.password });
-                localStorage.setItem('userName',        res.data.fullName);
-                localStorage.setItem('userRole',        res.data.role);
-                localStorage.setItem('isAuthenticated', 'true');
-                localStorage.setItem('linkedDoctorId',  res.data.linkedDoctorId  ?? '');
-                localStorage.setItem('linkedPatientId', res.data.linkedPatientId ?? '');
-                localStorage.setItem('userSpecialty', res.data.specialty ?? '');
-                navigate(res.data.role === 'User' ? '/home' : '/dashboard');
+                applyLogin(res);
             }
         } catch (err) {
             setError(getErrorMessage(err, 'Registration failed. Please check your details.'));

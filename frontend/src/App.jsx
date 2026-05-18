@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 import DashboardLayout from './components/DashboardLayout';
 import ProtectedRoute, { RoleRoute } from './components/ProtectedRoute';
 
@@ -24,6 +25,7 @@ const wrap = (Page) => <DashboardLayout><Page /></DashboardLayout>;
 
 function App() {
     return (
+        <AuthProvider>
         <Router>
             <Routes>
                 {/* Public */}
@@ -73,6 +75,7 @@ function App() {
 
             </Routes>
         </Router>
+        </AuthProvider>
     );
 }
 

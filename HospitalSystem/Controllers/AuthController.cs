@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -240,6 +241,36 @@ public class AuthController : ControllerBase
         });
 
         return Ok(new { message = "Logged out successfully. Cookies destroyed." });
+    }
+
+    // Returns the currently authenticated user's identity — used by the
+    // frontend on every page load to replace the insecure localStorage role check.
+    [HttpGet("me")]
+    [Authorize]
+    public async Task<IActionResult> GetCurrentUser()
+    {
+        var email = User.Identity?.Name;
+        if (email == null) return Unauthorized();
+
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null) return Unauthorized();
+
+        var roles = await _userManager.GetRolesAsync(user);
+        var primaryRole = roles.FirstOrDefault() ?? "User";
+
+        var linkedDoctor  = await _context.Doctors.FirstOrDefaultAsync(d => d.UserId == user.Id);
+        var linkedPatient = await _context.Patients.FirstOrDefaultAsync(p => p.UserId == user.Id);
+
+        return Ok(new
+        {
+            id             = user.Id,
+            email          = user.Email,
+            fullName       = user.FullName,
+            role           = primaryRole,
+            linkedDoctorId  = linkedDoctor  != null ? (int?)linkedDoctor.Id  : null,
+            linkedPatientId = linkedPatient != null ? (int?)linkedPatient.Id : null,
+            specialty      = linkedDoctor?.Specialty
+        });
     }
 
 

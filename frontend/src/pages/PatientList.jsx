@@ -2,15 +2,15 @@ import { useEffect, useState } from 'react';
 import patientService from '../services/patientService';
 import { Link } from 'react-router-dom';
 import { Plus, Trash2, User, Edit } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export default function PatientList() {
     const [patients, setPatients] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    
-    
-    const userRole = localStorage.getItem('userRole');
-    const isAdmin = userRole === 'Admin';
+    const { user } = useAuth();
+
+    const isAdmin = user?.role === 'Admin';
 
     useEffect(() => {
         fetchPatients();

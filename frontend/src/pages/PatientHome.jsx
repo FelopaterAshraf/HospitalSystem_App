@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import appointmentService from '../services/appointmentService';
+import { useAuth } from '../context/AuthContext';
 import {
     CalendarPlus, Heart, Brain, Bone, Baby, ClipboardList,
     Clock, Calendar, ShieldCheck, Award, Zap, Activity, Users,
@@ -28,7 +29,8 @@ const STATUS_CLASS  = {
 };
 
 export default function PatientHome() {
-    const userName = localStorage.getItem('userName') || 'Patient';
+    const { user } = useAuth();
+    const userName = user?.fullName || 'Patient';
     const [allAppointments, setAllAppointments] = useState([]);
     const [loadingAppts, setLoadingAppts] = useState(true);
 

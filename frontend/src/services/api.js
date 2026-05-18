@@ -9,21 +9,19 @@ const api = axios.create({
 api.interceptors.response.use(
     (response) => response,
     async (error) => {
-        const isLoginRoute = error.config?.url?.includes('/auth/login');
+        const isLoginRoute   = error.config?.url?.includes('/auth/login');
         const isRefreshRoute = error.config?.url?.includes('/auth/refresh');
 
         if (error.response?.status === 401 && !isLoginRoute && !isRefreshRoute) {
             try {
-                // Try to silently get a new token
                 await api.post('/auth/refresh');
-                // Retry the original request
                 return api(error.config);
-            } catch (refreshError) {
-                // Refresh also failed, session is truly dead — kick them out
-                localStorage.removeItem('isAuthenticated');
-                localStorage.removeItem('userName');
-                localStorage.removeItem('userRole');
-                window.location.href = '/';
+            } catch {
+                // Session is truly dead. Only redirect when not already on the
+                // login page to avoid an infinite reload loop on cold visits.
+                if (window.location.pathname !== '/') {
+                    window.location.href = '/';
+                }
             }
         }
         return Promise.reject(error);

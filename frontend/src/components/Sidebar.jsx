@@ -5,6 +5,7 @@ import {
 
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
+import { useAuth } from '../context/AuthContext';
 
 const ADMIN_LINKS = [
     { to: '/dashboard',    label: 'Dashboard',    Icon: LayoutDashboard },
@@ -29,20 +30,19 @@ const USER_LINKS = [
 export default function Sidebar() {
     const location  = useLocation();
     const navigate  = useNavigate();
-    const userRole  = localStorage.getItem('userRole');
-    const userName  = localStorage.getItem('userName') || 'User';
-    const userSpecialty = localStorage.getItem('userSpecialty');
+    const { user, setUser } = useAuth();
+    const userRole      = user?.role;
+    const userName      = user?.fullName || 'User';
+    const userSpecialty = user?.specialty;
 
     const links = userRole === 'Admin'  ? ADMIN_LINKS
                 : userRole === 'Doctor' ? DOCTOR_LINKS
                 : USER_LINKS;
-                
 
     const handleLogout = async () => {
         try { await authService.logout(); } catch {}
         finally {
-            ['isAuthenticated', 'userRole', 'userName', 'linkedDoctorId', 'linkedPatientId']
-                .forEach(k => localStorage.removeItem(k));
+            setUser(null);
             navigate('/');
         }
     };

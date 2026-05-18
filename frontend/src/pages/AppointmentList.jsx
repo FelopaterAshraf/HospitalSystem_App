@@ -2,21 +2,23 @@ import { useEffect, useState } from 'react';
 import appointmentService from '../services/appointmentService';
 import { Link, useNavigate } from 'react-router-dom';
 import { Plus, Trash2, Calendar, Edit, Clock } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export default function AppointmentList() {
     const [appointments, setAppointments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const { user } = useAuth();
 
-    const userRole = localStorage.getItem('userRole');
-    const isAdmin = userRole === 'Admin';
-    const isPatient = userRole === 'User' && !!localStorage.getItem('linkedPatientId');
+    const userRole  = user?.role;
+    const isAdmin   = userRole === 'Admin';
+    const isPatient = userRole === 'User' && !!user?.linkedPatientId;
 
     useEffect(() => {
         if (userRole === 'User') { navigate('/my-appointments', { replace: true }); return; }
         fetchAppointments();
-    }, []);
+    }, [userRole]);
 
     const fetchAppointments = async () => {
         try {

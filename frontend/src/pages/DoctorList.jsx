@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
 import doctorService from '../services/doctorService';
-import { Link } from 'react-router-dom'; // React Router's tool for navigating between pages without refreshing the browser.
+import { Link } from 'react-router-dom';
 import { Plus, Trash2, UserCircle, Edit, CalendarDays } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export default function DoctorList() {
     const [doctors, setDoctors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    
-    
-    const userRole = localStorage.getItem('userRole');
-    const isAdmin = userRole === 'Admin';
+    const { user } = useAuth();
+
+    const isAdmin = user?.role === 'Admin';
     
     useEffect(() => {
         fetchDoctors();

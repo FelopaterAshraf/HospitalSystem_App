@@ -4,6 +4,7 @@ import doctorService from '../services/doctorService';
 import appointmentService from '../services/appointmentService';
 import { getErrorMessage } from '../services/errorHelper';
 import { ArrowLeft, CalendarPlus, CheckCircle2, AlertCircle } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const SLOT_HOURS = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17];
 
@@ -50,7 +51,8 @@ function slotStyle(status, selected) {
 }
 
 export default function BookAppointment() {
-    const linkedPatientId = localStorage.getItem('linkedPatientId');
+    const { user } = useAuth();
+    const linkedPatientId = user?.linkedPatientId;
     const navigate = useNavigate();
 
     const [doctors, setDoctors] = useState([]);

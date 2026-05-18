@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import doctorService      from '../services/doctorService';
 import patientService     from '../services/patientService';
@@ -573,8 +574,9 @@ function DoctorDashboard({ userName }) {
 // Root export
 // ─────────────────────────────────────────────────────────────
 export default function Dashboard() {
-    const userName = localStorage.getItem('userName') || '';
-    const userRole = localStorage.getItem('userRole');
+    const { user } = useAuth();
+    const userName = user?.fullName || '';
+    const userRole = user?.role;
     if (userRole === 'Doctor') return <DoctorDashboard userName={userName} />;
     return <AdminDashboard userName={userName} />;
 }

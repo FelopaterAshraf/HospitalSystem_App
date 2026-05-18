@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Activity, Home, UserCircle, CalendarPlus, ClipboardList, LogOut } from 'lucide-react';
 import authService from '../services/authService';
+import { useAuth } from '../context/AuthContext';
 
 const NAV_LINKS = [
     { to: '/home',              label: 'Home',            Icon: Home },
@@ -12,12 +13,12 @@ const NAV_LINKS = [
 export default function PatientLayout({ children }) {
     const location = useLocation();
     const navigate = useNavigate();
+    const { setUser } = useAuth();
 
     const handleLogout = async () => {
         try { await authService.logout(); } catch {}
         finally {
-            ['isAuthenticated', 'userRole', 'userName', 'linkedDoctorId', 'linkedPatientId']
-                .forEach(k => localStorage.removeItem(k));
+            setUser(null);
             navigate('/');
         }
     };
